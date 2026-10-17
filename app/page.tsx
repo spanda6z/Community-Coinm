@@ -23,7 +23,7 @@ export default async function Home() {
           community<span>coin</span>
         </Link>
         <div className="nav-links">
-          <a href="#how">How it works</a>
+          <a href="#how">How</a>
           <a href="#vault">Vault</a>
           <a href="#telegram">Telegram</a>
           <a href="#transparency">On-chain</a>
@@ -44,6 +44,26 @@ export default async function Home() {
         </div>
       </nav>
 
+      <div className="live-strip wrap">
+        <div className="live-item">
+          <span className="live-dot" aria-hidden />
+          <span className="live-label">Vault</span>
+          <strong>
+            {vault.ok ? `${vault.solFormatted} SOL` : "— SOL"}
+          </strong>
+        </div>
+        <div className="live-sep" aria-hidden />
+        <div className="live-item">
+          <span className="live-label">Network</span>
+          <strong>Solana</strong>
+        </div>
+        <div className="live-sep" aria-hidden />
+        <div className="live-item">
+          <span className="live-label">Status</span>
+          <strong>Community-owned</strong>
+        </div>
+      </div>
+
       <section className="hero wrap">
         <div className="hero-img">
           <img src={BANNER} alt="COMMUNITY COIN" />
@@ -56,14 +76,14 @@ export default async function Home() {
         </h1>
         <p className="hero-lead">
           Holders make the culture. The vault funds the push — marketing and
-          airdrops only.
+          airdrops only. No CEO. No private allocation.
         </p>
         <div className="hero-actions">
           <a className="btn btn-fill" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join Telegram
           </a>
           <a className="btn btn-line" href="#vault">
-            Fuel marketing &amp; airdrops
+            Fuel the vault
           </a>
         </div>
       </section>
@@ -80,12 +100,42 @@ export default async function Home() {
 
       <hr className="rule" />
 
+      <section className="block wrap" id="pillars">
+        <p className="block-label">The message</p>
+        <h2>
+          Four words. <em>One movement.</em>
+        </h2>
+        <div className="pillars">
+          <article className="pillar">
+            <span className="pillar-num">01</span>
+            <h3>Togetherness</h3>
+            <p>Everyone matters — not just founders or early holders.</p>
+          </article>
+          <article className="pillar">
+            <span className="pillar-num">02</span>
+            <h3>Cooperation</h3>
+            <p>Growth comes from people creating and spreading the vision.</p>
+          </article>
+          <article className="pillar">
+            <span className="pillar-num">03</span>
+            <h3>Ambition</h3>
+            <p>A $1B market cap is the shared target — not a promise.</p>
+          </article>
+          <article className="pillar">
+            <span className="pillar-num">04</span>
+            <h3>History</h3>
+            <p>Build a community people remember being part of.</p>
+          </article>
+        </div>
+      </section>
+
+      <hr className="rule" />
+
       <section className="block wrap" id="how">
         <p className="block-label">How it works</p>
         <h2>Simple by design.</h2>
         <p className="block-text">
-          No complicated product deck. Four moves that keep the community honest
-          and active.
+          Four moves that keep the community honest and active.
         </p>
         <div className="rows">
           <div className="row">
@@ -179,7 +229,13 @@ export default async function Home() {
           </div>
 
           <div className="vault-panel">
-            <p className="label">Vault balance</p>
+            <div className="vault-panel-top">
+              <p className="label">Vault balance</p>
+              <span className="live-badge">
+                <span className="live-dot" aria-hidden />
+                Live
+              </span>
+            </div>
             <p className="vault-balance">
               {vault.ok ? (
                 <>
@@ -190,15 +246,15 @@ export default async function Home() {
                 <span className="vault-sol">—</span>
               )}
             </p>
-            <p className="label" style={{ marginTop: 20 }}>
+            <p className="label" style={{ marginTop: 24 }}>
               Treasury wallet
             </p>
             <p className="addr">{TREASURY}</p>
             <p className="note">
-              Live on-chain balance. Marketing &amp; airdrops only. Voluntary. No
-              yield. No guaranteed returns.
+              Live on-chain balance. Marketing &amp; airdrops only. Voluntary.
+              No yield. No guaranteed returns.
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div className="vault-actions">
               <Link className="btn btn-fill" href="/donate">
                 Support the vault
               </Link>
@@ -220,13 +276,10 @@ export default async function Home() {
         <div style={{ marginTop: 48 }}>
           <p className="block-label">Recent spends</p>
           {recentSpends.length === 0 ? (
-            <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.6 }}>
+            <p className="empty-note">
               No spends logged yet. When the vault pays for marketing or an
               airdrop, it will be listed here and on the{" "}
-              <Link href="/spends" style={{ borderBottom: "1px solid #444" }}>
-                spends page
-              </Link>
-              .
+              <Link href="/spends">spends page</Link>.
             </p>
           ) : (
             <div className="spends-list">
@@ -250,16 +303,7 @@ export default async function Home() {
                   </div>
                 </article>
               ))}
-              <Link
-                href="/spends"
-                style={{
-                  display: "inline-block",
-                  marginTop: 16,
-                  fontSize: 13,
-                  color: "var(--muted)",
-                  borderBottom: "1px solid #333",
-                }}
-              >
+              <Link href="/spends" className="text-link">
                 Full spends log →
               </Link>
             </div>
@@ -321,6 +365,20 @@ export default async function Home() {
           Submit in Telegram. Upvote the best. Weekly winners get the site, a
           role, an X shoutout, and points.
         </p>
+        <div className="meme-grid">
+          <div className="meme-slot">
+            <span>01</span>
+            <p>Submit</p>
+          </div>
+          <div className="meme-slot">
+            <span>02</span>
+            <p>Battle</p>
+          </div>
+          <div className="meme-slot">
+            <span>03</span>
+            <p>Feature</p>
+          </div>
+        </div>
         <div className="meme-teaser">
           <h3>Gallery opening soon</h3>
           <p>First community submissions will appear here.</p>
@@ -357,8 +415,8 @@ export default async function Home() {
                 </>
               ) : (
                 <>
-                  <code style={{ color: "var(--muted)" }}>Not configured yet</code>
-                  <p style={{ fontSize: 13, color: "var(--dim)", marginTop: 8 }}>
+                  <code className="muted-code">Not configured yet</code>
+                  <p className="addr-hint">
                     Official mint appears here once set and verified.
                   </p>
                 </>
@@ -366,7 +424,7 @@ export default async function Home() {
             </div>
             <div className="addr-item">
               <p className="lbl">Vault · marketing &amp; airdrops</p>
-              <p style={{ fontSize: 28, fontWeight: 600, margin: "8px 0 12px" }}>
+              <p className="addr-balance">
                 {vault.ok ? `${vault.solFormatted} SOL` : "— SOL"}
               </p>
               <code>{TREASURY}</code>
@@ -379,21 +437,14 @@ export default async function Home() {
               </a>
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 12,
-              justifyContent: "center",
-            }}
-          >
-            <Link href="/dashboard" className="btn btn-fill" style={{ alignSelf: "flex-start" }}>
+          <div className="side-actions">
+            <Link href="/dashboard" className="btn btn-fill">
               Token data
             </Link>
-            <Link href="/treasury" className="btn btn-line" style={{ alignSelf: "flex-start" }}>
+            <Link href="/treasury" className="btn btn-line">
               Treasury activity
             </Link>
-            <Link href="/spends" className="btn btn-line" style={{ alignSelf: "flex-start" }}>
+            <Link href="/spends" className="btn btn-line">
               Spends log
             </Link>
           </div>
@@ -452,6 +503,7 @@ export default async function Home() {
       <hr className="rule" />
 
       <section className="final wrap">
+        <p className="hero-kicker">Together</p>
         <h2>
           Together, we grow.
           <br />
