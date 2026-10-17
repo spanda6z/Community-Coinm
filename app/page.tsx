@@ -7,6 +7,10 @@ const links = [
   { href: "/link-wallet", label: "Link wallet" },
 ];
 
+// Temporary: use project CDN until public/community-banner.jpg is committed
+const BANNER =
+  "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
+
 export default function Home() {
   const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
   const telegram = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/";
@@ -36,7 +40,7 @@ export default function Home() {
 
       <section className="hero shell">
         <div className="hero-banner">
-          <img src="/community-banner.jpg" alt="COMMUNITY COIN — the crew" />
+          <img src={BANNER} alt="COMMUNITY COIN — the crew" />
         </div>
 
         <div className="hero-badge">
