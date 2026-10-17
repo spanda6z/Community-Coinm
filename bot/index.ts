@@ -30,7 +30,6 @@ const TREASURY =
   process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
   "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
 
-/** Captcha window: 3 minutes */
 const CAPTCHA_MS = 3 * 60 * 1000;
 
 type PendingCaptcha = {
@@ -73,7 +72,7 @@ function mention(user: {
 }
 
 function makeMath(): { a: number; b: number; answer: number } {
-  const a = 2 + Math.floor(Math.random() * 12); // 2–13
+  const a = 2 + Math.floor(Math.random() * 12);
   const b = 2 + Math.floor(Math.random() * 12);
   return { a, b, answer: a + b };
 }
@@ -131,7 +130,6 @@ async function unrestrictMember(chatId: number, userId: number) {
 async function kickMember(chatId: number, userId: number) {
   try {
     await bot.api.banChatMember(chatId, userId);
-    // Unban so they can rejoin later and try again
     await bot.api.unbanChatMember(chatId, userId);
   } catch (e) {
     console.error("kick failed", e);
@@ -152,12 +150,9 @@ async function startCaptcha(
 ) {
   const key = captchaKey(chatId, user.id);
   clearCaptcha(key);
-
   await restrictNewMember(chatId, user.id);
 
   const { a, b, answer } = makeMath();
-
-  // Build answer keyboard with one correct + distractors
   const options = new Set<number>([answer]);
   while (options.size < 4) {
     const fake = answer + (Math.floor(Math.random() * 9) - 4);
@@ -219,11 +214,9 @@ async function startCaptcha(
   });
 }
 
-// ——— New members ———
 bot.on("message:new_chat_members", async (ctx) => {
   const chatId = ctx.chat?.id;
-  if (!chatId || chatId > 0) return; // groups/supergroups only
-
+  if (!chatId || chatId > 0) return;
   const members = ctx.message?.new_chat_members || [];
   for (const member of members) {
     if (member.is_bot) continue;
@@ -232,43 +225,33 @@ bot.on("message:new_chat_members", async (ctx) => {
   }
 });
 
-// Also handle chat_member updates (more reliable in some groups)
 bot.on("chat_member", async (ctx) => {
   const update = ctx.chatMember;
   if (!update) return;
   const chatId = update.chat.id;
   if (chatId > 0) return;
-
   const oldStatus = update.old_chat_member.status;
   const newStatus = update.new_chat_member.status;
   const user = update.new_chat_member.user;
-
   if (user.is_bot) return;
-
   const joined =
     (oldStatus === "left" || oldStatus === "kicked") &&
     (newStatus === "member" || newStatus === "restricted");
-
   if (!joined) return;
-
   touchPlayer(String(user.id), user.username, user.first_name);
   await startCaptcha(chatId, user);
 });
 
-// Captcha button answers
 bot.callbackQuery(/^captcha:(-?\d+):(\d+):(\d+)$/, async (ctx) => {
   const chatId = Number(ctx.match![1]);
   const userId = Number(ctx.match![2]);
   const picked = Number(ctx.match![3]);
-
-  // Only the challenged user can answer
   if (!ctx.from || ctx.from.id !== userId) {
     return ctx.answerCallbackQuery({
       text: "This check is not for you.",
       show_alert: true,
     });
   }
-
   const key = captchaKey(chatId, userId);
   const challenge = pending.get(key);
   if (!challenge) {
@@ -277,7 +260,6 @@ bot.callbackQuery(/^captcha:(-?\d+):(\d+):(\d+)$/, async (ctx) => {
       show_alert: true,
     });
   }
-
   if (picked !== challenge.answer) {
     clearCaptcha(key);
     await ctx.answerCallbackQuery({ text: "Wrong answer.", show_alert: true });
@@ -295,20 +277,15 @@ bot.callbackQuery(/^captcha:(-?\d+):(\d+):(\d+)$/, async (ctx) => {
     } catch {}
     return;
   }
-
-  // Correct
   clearCaptcha(key);
   await unrestrictMember(chatId, userId);
   await ctx.answerCallbackQuery({ text: "Verified. Welcome in." });
-
   const p = touchPlayer(
     String(userId),
     ctx.from.username,
     ctx.from.first_name
   );
-  // Small welcome bonus
   addPoints(p.id, 10);
-
   try {
     await ctx.editMessageText(
       `✅ ${mention(ctx.from)} verified.\n\n` +
@@ -320,7 +297,6 @@ bot.callbackQuery(/^captcha:(-?\d+):(\d+):(\d+)$/, async (ctx) => {
   } catch {}
 });
 
-// Track activity in groups for /rain
 bot.on("message", async (ctx, next) => {
   const id = uid(ctx);
   if (id && ctx.chat) {
@@ -641,8 +617,8 @@ bot.command("vault", async (ctx) => {
   await ctx.reply(
     `*Community vault*\n\n` +
       `\`${TREASURY}\`\n\n` +
-      `Voluntary support for memes, events, raids, and rewards.\n` +
-      `No yield. No guaranteed returns.\n\n` +
+      `Funds are used for *marketing* and *airdrops* — growth and community rewards.\n` +
+      `Voluntary only. No yield. No guaranteed returns.\n\n` +
       `Explorer:\nhttps://explorer.solana.com/address/${TREASURY}`,
     { parse_mode: "Markdown" }
   );
