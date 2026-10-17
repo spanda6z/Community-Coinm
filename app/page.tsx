@@ -1,50 +1,98 @@
 import Link from "next/link";
 
-const features = [
-  { n: "01", title: "Built in the open", body: "Clear token details, verified links, and a treasury activity feed designed to make community funds easy to follow." },
-  { n: "02", title: "Community has a voice", body: "Propose ideas, discuss priorities, and signal support. Governance stays transparent about what is a poll and what is binding." },
-  { n: "03", title: "People over hype", body: "A home for holders, builders, creators, and curious newcomers. No guaranteed returns. No fake numbers." },
-];
-const steps = [
-  { n: "01", title: "Connect your own wallet", body: "Use a supported Solana wallet. Your seed phrase never belongs on this site or in a Telegram chat." },
-  { n: "02", title: "Explore the ecosystem", body: "Check the verified token address, understand the allocation, and join the community conversation." },
-  { n: "03", title: "Take part", body: "Vote in community polls, contribute ideas, and support community-funded initiatives when the treasury is configured." },
+function FrogMascot({ className = "" }: { className?: string }) {
+  return <svg className={className} viewBox="0 0 360 330" role="img" aria-label="Friendly green frog mascot illustration">
+    <g stroke="#183b29" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M62 201 Q36 165 48 128 Q57 100 83 111 Q107 120 106 154" fill="#72d66e"/>
+      <path d="M296 201 Q324 165 312 128 Q303 100 277 111 Q253 120 254 154" fill="#72d66e"/>
+      <ellipse cx="180" cy="194" rx="119" ry="104" fill="#68d866"/>
+      <ellipse cx="128" cy="105" rx="49" ry="53" fill="#8aeb78"/>
+      <ellipse cx="232" cy="105" rx="49" ry="53" fill="#8aeb78"/>
+      <ellipse cx="129" cy="108" rx="24" ry="29" fill="#fffdf0"/>
+      <ellipse cx="231" cy="108" rx="24" ry="29" fill="#fffdf0"/>
+      <ellipse cx="134" cy="113" rx="11" ry="16" fill="#183b29" strokeWidth="4"/>
+      <ellipse cx="226" cy="113" rx="11" ry="16" fill="#183b29" strokeWidth="4"/>
+      <path d="M112 194 Q180 250 248 194 Q241 266 180 268 Q119 266 112 194Z" fill="#f8f3d9"/>
+      <path d="M119 194 Q180 218 241 194" fill="none" strokeWidth="5"/>
+      <path d="M93 260 Q72 280 55 270 M267 260 Q288 280 305 270" fill="none"/>
+      <path d="M92 293 Q75 311 59 302 M268 293 Q285 311 301 302" fill="none"/>
+    </g>
+    <circle cx="89" cy="173" r="13" fill="#ff9b90" opacity=".9"/><circle cx="271" cy="173" r="13" fill="#ff9b90" opacity=".9"/>
+    <path d="M47 57 l7 16 16 7 -16 7 -7 16 -7 -16 -16 -7 16 -7Z" fill="#ffcb54" stroke="#183b29" strokeWidth="3"/>
+    <path d="M307 52 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5Z" fill="#ffcb54" stroke="#183b29" strokeWidth="3"/>
+  </svg>;
+}
+
+const links = [
+  { href: "/dashboard", label: "On-chain data" },
+  { href: "/governance", label: "Governance" },
+  { href: "/treasury", label: "Treasury" },
+  { href: "/link-wallet", label: "Link wallet" },
 ];
 
 export default function Home() {
-  return <main>
-    <nav className="nav shell">
-      <Link className="brand" href="/"><span className="brand-mark">C</span><span>COMMUNITY<span className="brand-light">COIN</span></span></Link>
-      <div className="nav-links"><a href="#mission">Mission</a><a href="#ecosystem">Ecosystem</a><a href="#transparency">Transparency</a><a href="/dashboard">On-chain data</a><a href="/link-wallet">Link wallet</a><a href="/governance">Governance</a><a href="/treasury">Treasury</a><a href="/donate">Donate</a></div>
-      <a className="nav-cta" href="#join">Join community <span>↗</span></a>
+  const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
+  return <main className="pond">
+    <div className="pond-topline"><span><i /> COMMUNITY-POWERED. SOLANA-NATIVE.</span><span>GOOD PEOPLE. GOOD MEMES. OPEN BOOKS.</span></div>
+    <nav className="pond-nav shell">
+      <Link className="pond-brand" href="/"><span className="pond-brand-icon">C<span>✳</span></span><span>community<span className="pond-brand-light">coin</span></span></Link>
+      <div className="pond-nav-links"><a href="#the-vibe">The vibe</a><a href="#how-to-join">How to join</a><a href="#transparency">Transparency</a></div>
+      <a className="pond-nav-cta" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Come hang <span>↗</span></a>
     </nav>
-    <section className="hero shell">
-      <div className="hero-copy">
-        <div className="eyebrow"><span className="pulse" /> A community-powered Solana project</div>
-        <h1>Not a one-man coin.<br/><em>A community</em><br/>movement.</h1>
-        <p className="hero-text">A token is only the beginning. We’re building a place for people to connect, contribute, and shape what comes next — together.</p>
-        <div className="hero-actions"><a className="button button-dark" href="#join">Find your people <span>↗</span></a><a className="text-link" href="#mission">Discover the mission <span>↓</span></a></div>
-        <div className="hero-note"><span className="note-icon">↳</span><span>Early stage. Community first.<br/><b>Built in public, one step at a time.</b></span></div>
+
+    <section className="pond-hero shell">
+      <div className="pond-hero-copy">
+        <div className="pond-pill"><span>✳</span> THE PEOPLE'S LITTLE CORNER OF SOLANA</div>
+        <h1>Making<br/>community<br/><em>great again.</em></h1>
+        <p className="pond-subtitle">A little coin. A lot of community. We're here for the memes, the makers, and the magic that happens when good people build things together.</p>
+        <div className="pond-hero-actions">
+          <a className="pond-button pond-button-dark" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Join the community <span>↗</span></a>
+          <a className="pond-text-link" href="#the-vibe">Meet the pond ↓</a>
+        </div>
+        <div className="pond-small-note"><span>☻</span><p><strong>No suits. No sermons.</strong><br/>Just a community figuring it out together.</p></div>
       </div>
-      <div className="hero-art" aria-label="Abstract community coin artwork">
-        <div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="orbit orbit-three" />
-        <div className="coin-shadow" /><div className="coin"><div className="coin-inner"><span className="coin-symbol">C</span><span className="coin-word">COMMUNITY</span><span className="coin-stars">✳ · ✳ · ✳</span></div></div>
-        <span className="float-tag tag-one"><span className="tag-dot" /> BUILT TOGETHER</span><span className="float-tag tag-two">SOLANA ECOSYSTEM ↗</span><span className="spark spark-one">✳</span><span className="spark spark-two">✳</span>
+      <div className="pond-hero-visual">
+        <div className="pond-sun"></div><div className="pond-ripple ripple-a"></div><div className="pond-ripple ripple-b"></div>
+        <div className="pond-sticker sticker-hi">OH, HAI! <span>✳</span></div>
+        <FrogMascot className="pond-frog"/>
+        <div className="pond-coin-sticker">C<span>✳</span></div>
+        <div className="pond-sticker sticker-good">GOOD VIBES ONLY-ish</div>
+        <span className="pond-star star-a">✳</span><span className="pond-star star-b">✳</span>
       </div>
-      <div className="hero-bottom"><span>INDEPENDENT MINDS. SHARED PURPOSE.</span><span>SCROLL TO EXPLORE ↓</span></div>
+      <div className="pond-hero-bottom"><span>COMMUNITY FIRST, ALWAYS.</span><span>SCROLL A LITTLE ↓</span></div>
     </section>
-    <section className="ticker" aria-label="Project values"><div className="ticker-track">{Array.from({length:2},(_,i)=><span key={i}>COMMUNITY FIRST <b>✳</b> TRANSPARENCY ALWAYS <b>✳</b> BUILD IN PUBLIC <b>✳</b> SOLANA NATIVE <b>✳</b> PEOPLE POWERED <b>✳</b></span>)}</div></section>
-    <section className="section shell" id="mission">
-      <div className="section-kicker"><span>01 / THE WHY</span><span>MORE THAN A TOKEN</span></div>
-      <div className="mission-grid"><h2>Crypto moves<br/>fast. <em>Community</em><br/>moves things.</h2><div className="mission-copy"><p className="lead">COMMUNITY Coin is an experiment in what happens when the people are the point — not an afterthought.</p><p>We’re creating the foundations for a more open, useful, and welcoming ecosystem. That means sharing what we know, being honest about what’s still being built, and making room for the community to help shape the roadmap.</p><a className="under-link" href="#ecosystem">See what we’re building <span>↗</span></a></div></div>
-      <div className="feature-grid" id="ecosystem">{features.map(f=><article className="feature" key={f.n}><span className="feature-n">{f.n}</span><div className="feature-icon">{f.n==="01"?"◈":f.n==="02"?"◎":"✳"}</div><h3>{f.title}</h3><p>{f.body}</p><span className="feature-arrow">↗</span></article>)}</div>
+
+    <div className="pond-ticker"><div className="pond-ticker-track">{Array.from({length:2},(_,i)=><span key={i}>MEMES WITH MEANING <b>✳</b> COMMUNITY OVER CLOUT <b>✳</b> BUILT IN THE OPEN <b>✳</b> ONE POND, MANY FROGS <b>✳</b> SOLANA GOODNESS <b>✳</b></span>)}</div></div>
+
+    <section className="pond-intro shell" id="the-vibe">
+      <div className="pond-section-label"><span>01 / THE VIBE</span><span>A COIN WITH A COMMUNITY AROUND IT</span></div>
+      <div className="pond-intro-grid">
+        <div><span className="pond-hand-note">psst… you're invited</span><h2>Crypto can be<br/>a little more <em>human.</em></h2></div>
+        <div className="pond-intro-copy"><p className="pond-lead">We like the silly stuff. We believe in the serious stuff. And we think the best communities make room for both.</p><p>COMMUNITY Coin is a community-first Solana project built around shared ideas, transparent on-chain information, and making space for people to participate. No magic promises. Just a pond we're building together.</p><a className="pond-under-link" href="/dashboard">Peek at the on-chain data <span>↗</span></a></div>
+      </div>
+      <div className="pond-card-grid">
+        <article className="pond-card pond-card-lime"><span className="pond-card-num">01</span><div className="pond-doodle">☻</div><h3>Memes bring us together.</h3><p>Come for the fun. Stay for the people, ideas, and things we make along the way.</p><span className="pond-card-bottom">GOOD ENERGY ONLY ↗</span></article>
+        <article className="pond-card pond-card-pink"><span className="pond-card-num">02</span><div className="pond-doodle">♡</div><h3>Everyone gets a voice.</h3><p>Share an idea, explore community polls, and help shape what comes next.</p><a className="pond-card-bottom" href="/governance">VISIT GOVERNANCE ↗</a></article>
+        <article className="pond-card pond-card-blue"><span className="pond-card-num">03</span><div className="pond-doodle">◎</div><h3>Open books, always.</h3><p>We show verified on-chain information when it's connected. No made-up numbers, ever.</p><a className="pond-card-bottom" href="/treasury">SEE THE TREASURY ↗</a></article>
+      </div>
     </section>
-    <section className="dark-section" id="transparency"><div className="shell transparency">
-      <div><div className="section-kicker light"><span>02 / THE PROMISE</span><span>NO SMOKE. NO MIRRORS.</span></div><h2>Trust isn’t a slogan.<br/><em>Show the work.</em></h2><p className="dark-lead">We won’t dress placeholders up as facts. Token addresses, treasury movements, and market data will appear here once they’re connected to verified sources.</p><div className="transparency-actions"><a className="button button-lime" href="/dashboard">View on-chain data <span>↗</span></a><a className="transparency-explorer" href="https://explorer.solana.com/" target="_blank" rel="noreferrer">Open Solana Explorer ↗</a></div></div>
-      <div className="ledger"><div className="ledger-head"><span>COMMUNITY LEDGER</span><span className="ledger-status"><i/> INTEGRATION PENDING</span></div><div className="ledger-row"><span>Token mint</span><b>Not configured</b></div><div className="ledger-row"><span>Treasury wallet</span><b>Not configured</b></div><div className="ledger-row"><span>Latest activity</span><b>Awaiting verified feed</b></div><div className="ledger-row"><span>Market data</span><b>Not connected</b></div><div className="ledger-foot">Live data will be sourced from verified on-chain records.<br/>No fabricated balances or transaction history.</div></div>
+
+    <section className="pond-green-section" id="how-to-join"><div className="shell pond-join-grid">
+      <div className="pond-join-art"><div className="pond-join-orbit"></div><FrogMascot className="pond-frog-small"/><span className="pond-join-bubble">YOU, US,<br/>THE POND.</span></div>
+      <div className="pond-join-copy"><div className="pond-section-label pond-label-light"><span>02 / GET IN HERE</span><span>THREE EASY STEPS</span></div><h2>Find your people.<br/><em>Hop on in.</em></h2><p>New to Solana? No stress. Start with the community, take your time, and always double-check links and addresses.</p>
+        <div className="pond-steps"><div><span>01</span><section><h3>Get yourself a wallet</h3><p>Use a wallet you trust, like Phantom. Your recovery phrase stays private. Always.</p></section></div><div><span>02</span><section><h3>Come say hi</h3><p>Join the community and get to know the people and the project.</p></section></div><div><span>03</span><section><h3>Explore, don't rush</h3><p>Check token details and verified on-chain data before making any decisions.</p></section></div></div>
+        <a className="pond-button pond-button-cream" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Hop into Telegram <span>↗</span></a>
+      </div>
     </div></section>
-    <section className="section shell how"><div className="section-kicker"><span>03 / GET INVOLVED</span><span>YOUR COMMUNITY, YOUR CALL</span></div><div className="how-heading"><h2>There’s room<br/>for <em>you here.</em></h2><p>Whether you’re here to learn, build, create, or contribute, start with the community and grow from there.</p></div><div className="steps">{steps.map(s=><article className="step" key={s.n}><span>{s.n}</span><h3>{s.title}</h3><p>{s.body}</p></article>)}</div></section>
-    <section className="join-section" id="join"><div className="shell join-inner"><div className="join-stamp">C<span>✳</span></div><div><span className="join-kicker">THE NEXT CHAPTER IS OURS</span><h2>Good things happen<br/>when we <em>build together.</em></h2><p>Come meet the people behind the project. The best ideas don’t happen in a vacuum.</p><div className="join-actions"><a className="button button-dark" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Join Telegram <span>↗</span></a><a className="button button-outline" href={process.env.NEXT_PUBLIC_X_URL || "https://x.com/"} target="_blank" rel="noreferrer">Follow on X <span>↗</span></a></div></div></div></section>
-    <footer className="footer shell"><Link className="brand" href="/"><span className="brand-mark">C</span><span>COMMUNITY<span className="brand-light">COIN</span></span></Link><span>Community-powered. Transparency-led.</span><span>© {new Date().getFullYear()} COMMUNITY Coin</span></footer>
+
+    <section className="pond-transparency shell" id="transparency">
+      <div className="pond-section-label"><span>03 / THE OPEN BOOK</span><span>VERIFY IT YOURSELF</span></div>
+      <div className="pond-transparency-grid"><div><h2>Trust the pond.<br/><em>Verify the facts.</em></h2><p>We don't do mystery numbers or made-up market stats. Explore the on-chain records and check the addresses yourself before you interact.</p><div className="pond-transparency-links"><Link href="/dashboard" className="pond-button pond-button-dark">Explore token data ↗</Link><Link href="/treasury" className="pond-text-link">Treasury activity ↗</Link></div></div>
+      <div className="pond-address-card"><div className="pond-address-head"><span>THE TOKEN</span><span className="pond-live-dot">{mint ? "MINT CONFIGURED" : "MINT NOT CONFIGURED"}</span></div><div className="pond-address-body"><span>Solana mint address</span>{mint ? <><code>{mint}</code><a href={"https://explorer.solana.com/address/" + mint} target="_blank" rel="noreferrer">View on Solana Explorer ↗</a></> : <><strong>We're keeping it honest.</strong><p>The official mint address will appear here once it's configured and verified.</p></>} </div><div className="pond-address-foot">ON-CHAIN DATA, NOT VIBES ALONE ✳</div></div></div>
+    </section>
+
+    <section className="pond-final"><div className="shell pond-final-inner"><div className="pond-final-frog"><FrogMascot className="pond-frog-end"/></div><div><span className="pond-final-kicker">THE POND IS BETTER WITH YOU</span><h2>Come for the memes.<br/><em>Stay for the people.</em></h2><p>Pull up a lily pad. There's room for one more.</p><div className="pond-final-actions"><a className="pond-button pond-button-dark" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Join Telegram ↗</a><a className="pond-button pond-button-outline" href={process.env.NEXT_PUBLIC_X_URL || "https://x.com/"} target="_blank" rel="noreferrer">Follow on X ↗</a></div></div></div></section>
+
+    <footer className="pond-footer shell"><Link className="pond-brand" href="/"><span className="pond-brand-icon">C<span>✳</span></span><span>community<span className="pond-brand-light">coin</span></span></Link><div className="pond-footer-links">{links.map(link=><Link href={link.href} key={link.href}>{link.label}</Link>)}<Link href="/donate">Donate</Link></div><span className="pond-disclaimer">Memes are fun. Crypto is risky. No promises of returns.</span><span className="pond-copyright">© {new Date().getFullYear()} COMMUNITY Coin</span></footer>
   </main>;
 }
