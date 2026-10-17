@@ -264,6 +264,23 @@ img { max-width: 100%; display: block; }
   color: var(--dim);
   margin-bottom: 16px;
 }
+.vault-panel .vault-balance {
+  margin: 8px 0 4px;
+  line-height: 1.1;
+}
+.vault-panel .vault-sol {
+  font-family: var(--serif);
+  font-size: clamp(2.4rem, 6vw, 3.2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+.vault-panel .vault-unit {
+  font-size: 1rem;
+  color: var(--muted);
+  margin-left: 6px;
+  font-family: var(--font);
+}
 .vault-panel .addr {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 13px;
