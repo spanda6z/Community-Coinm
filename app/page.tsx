@@ -23,6 +23,8 @@ function FrogMascot({ className = "" }: { className?: string }) {
   </svg>;
 }
 
+const COIN_LOGO_URL = "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
+
 const links = [
   { href: "/dashboard", label: "On-chain data" },
   { href: "/governance", label: "Governance" },
@@ -35,7 +37,7 @@ export default function Home() {
   return <main className="pond">
     <div className="pond-topline"><span><i /> COMMUNITY-POWERED. SOLANA-NATIVE.</span><span>GOOD PEOPLE. GOOD MEMES. OPEN BOOKS.</span></div>
     <nav className="pond-nav shell">
-      <Link className="pond-brand" href="/"><span className="pond-brand-icon">C<span>✳</span></span><span>community<span className="pond-brand-light">coin</span></span></Link>
+      <Link className="pond-brand" href="/"><img className="pond-brand-logo" src={COIN_LOGO_URL} alt="COMMUNITY Coin logo" /><span>community<span className="pond-brand-light">coin</span></span></Link>
       <div className="pond-nav-links"><a href="#the-vibe">The vibe</a><a href="#how-to-join">How to join</a><a href="#transparency">Transparency</a></div>
       <a className="pond-nav-cta" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Come hang <span>↗</span></a>
     </nav>
@@ -55,7 +57,7 @@ export default function Home() {
         <div className="pond-sun"></div><div className="pond-ripple ripple-a"></div><div className="pond-ripple ripple-b"></div>
         <div className="pond-sticker sticker-hi">OH, HAI! <span>✳</span></div>
         <FrogMascot className="pond-frog"/>
-        <div className="pond-coin-sticker">C<span>✳</span></div>
+        <div className="pond-coin-sticker"><img src={COIN_LOGO_URL} alt="COMMUNITY Coin logo" /></div>
         <div className="pond-sticker sticker-good">GOOD VIBES ONLY-ish</div>
         <span className="pond-star star-a">✳</span><span className="pond-star star-b">✳</span>
       </div>
