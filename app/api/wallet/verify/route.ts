@@ -62,8 +62,10 @@ export async function POST(request: Request) {
       await tx.wallet.upsert({
         where: { address: challenge.wallet },
         create: { address: challenge.wallet, userId: user.id, verifiedAt: new Date() },
-        update: { userId: user.id, verifiedAt: new Date() },
+        update: { verifiedAt: new Date() },
       });
+      const finalOwner = await tx.wallet.findUnique({ where: { address: challenge.wallet }, select: { userId: true } });
+      if (!finalOwner || finalOwner.userId !== user.id) throw new Error("WALLET_ALREADY_LINKED");
     });
     return NextResponse.json({ verified: true, wallet: challenge.wallet }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
