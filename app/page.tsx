@@ -15,10 +15,13 @@ const TREASURY =
   process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
   "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
 
+const TELEGRAM =
+  process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/communitycoinchatt";
+const X_URL =
+  process.env.NEXT_PUBLIC_X_URL || "https://x.com/communitycoin14";
+
 export default function Home() {
   const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
-  const telegram = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/";
-  const xUrl = process.env.NEXT_PUBLIC_X_URL || "https://x.com/";
 
   return (
     <main>
@@ -36,7 +39,7 @@ export default function Home() {
           <a href="#transparency">Transparency</a>
         </div>
         <div className="nav-right">
-          <a className="nav-cta" href={telegram} target="_blank" rel="noreferrer">
+          <a className="nav-cta" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join community
           </a>
         </div>
@@ -63,7 +66,7 @@ export default function Home() {
         </p>
 
         <div className="hero-actions">
-          <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
+          <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join the movement
           </a>
           <a className="btn btn-secondary" href="#vision">
@@ -113,7 +116,7 @@ export default function Home() {
               been part of. History is made together.
             </p>
             <div style={{ marginTop: 24 }}>
-              <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
+              <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
                 Join the movement
               </a>
             </div>
@@ -224,7 +227,7 @@ export default function Home() {
         </div>
 
         <div style={{ marginTop: 36 }}>
-          <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
+          <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join Telegram
           </a>
         </div>
@@ -334,10 +337,10 @@ export default function Home() {
         </h2>
         <p>There is room for one more.</p>
         <div className="final-actions">
-          <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
+          <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join the movement
           </a>
-          <a className="btn btn-secondary" href={xUrl} target="_blank" rel="noreferrer">
+          <a className="btn btn-secondary" href={X_URL} target="_blank" rel="noreferrer">
             Follow on X
           </a>
         </div>
