@@ -31,7 +31,12 @@ export default function Dashboard() {
   const formatTokenAmount = (amount: string, decimals: number) => {
     const raw = BigInt(amount);
     const scale = 10n ** BigInt(decimals);
-    const whole = (raw / scale).toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ",");
+    const wholeRaw = (raw / scale).toString();
+    let whole = "";
+    for (let i = 0; i < wholeRaw.length; i++) {
+      if (i > 0 && (wholeRaw.length - i) % 3 === 0) whole += ",";
+      whole += wholeRaw[i];
+    }
     const fraction = decimals > 0 ? (raw % scale).toString().padStart(decimals, "0").replace(/0+$/, "") : "";
     return fraction ? `${whole}.${fraction}` : whole;
   };
