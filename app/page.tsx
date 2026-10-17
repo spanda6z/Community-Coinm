@@ -7,7 +7,6 @@ const links = [
   { href: "/link-wallet", label: "Link wallet" },
 ];
 
-// Temporary: use project CDN until public/community-banner.jpg is committed
 const BANNER =
   "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
 
@@ -27,24 +26,24 @@ export default function Home() {
         </Link>
         <div className="nav-links">
           <a href="#vision">Vision</a>
-          <a href="#vibe">Features</a>
+          <a href="#features">Features</a>
           <a href="#join">Join</a>
           <a href="#transparency">Transparency</a>
         </div>
         <div className="nav-right">
           <a className="nav-cta" href={telegram} target="_blank" rel="noreferrer">
-            Join movement
+            Join community
           </a>
         </div>
       </nav>
 
       <section className="hero shell">
         <div className="hero-banner">
-          <img src={BANNER} alt="COMMUNITY COIN — the crew" />
+          <img src={BANNER} alt="COMMUNITY COIN" />
         </div>
 
         <div className="hero-badge">
-          <i /> Community-powered · Solana-native
+          <i /> Community-powered · Solana
         </div>
 
         <h1>
@@ -54,16 +53,16 @@ export default function Home() {
         </h1>
 
         <p className="hero-sub">
-          More than a coin — a community-powered journey. Cooperation, belief,
-          and collective effort. Build something bigger than yourself.
+          A community-powered journey on Solana. Built through cooperation,
+          belief, and collective effort — not hype alone.
         </p>
 
         <div className="hero-actions">
           <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
-            Join the movement →
+            Join the movement
           </a>
           <a className="btn btn-secondary" href="#vision">
-            See the vision
+            Our vision
           </a>
         </div>
       </section>
@@ -72,8 +71,8 @@ export default function Home() {
         <div className="ticker-track">
           {Array.from({ length: 2 }, (_, i) => (
             <span key={i}>
-              Together We Grow <b>✦</b> Together We Make History <b>✦</b> One
-              Community <b>✦</b> One Goal <b>✦</b> $1B Vision <b>✦</b>
+              Together We Grow <b>·</b> Together We Make History <b>·</b> One
+              Community <b>·</b> One Goal <b>·</b> $1B Vision <b>·</b>
             </span>
           ))}
         </div>
@@ -87,7 +86,7 @@ export default function Home() {
           <span className="muted">One goal.</span>
         </h2>
         <p className="section-lead">
-          A journey we build together. Every person has a part to play.
+          A journey we build together. Every participant has a role to play.
         </p>
 
         <div className="vision-row">
@@ -96,21 +95,21 @@ export default function Home() {
             <div className="mc-num">$1B</div>
             <div className="mc-unit">Market Cap</div>
             <p className="mc-note">
-              A vision for the future — not a guaranteed financial outcome.
+              A long-term vision — not a guarantee of financial returns.
             </p>
           </div>
           <div className="vision-copy">
             <p>
-              Growth comes from cooperation, belief, and collective effort —
-              not from any single founder or early holder. Everyone matters.
+              Growth is driven by cooperation and collective effort — not by a
+              single founder or early cohort. Everyone matters.
             </p>
             <p>
-              The aim is simple: build a community people will remember being
-              part of. Let’s make history together.
+              The objective is clear: build a community people are proud to have
+              been part of. History is made together.
             </p>
-            <div style={{ marginTop: 20 }}>
+            <div style={{ marginTop: 24 }}>
               <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
-                Join the movement →
+                Join the movement
               </a>
             </div>
           </div>
@@ -120,17 +119,17 @@ export default function Home() {
           <article className="pillar">
             <div className="pillar-num">01</div>
             <h3>Togetherness</h3>
-            <p>Everyone matters — not just founders or early holders.</p>
+            <p>Everyone matters — not only founders or early holders.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">02</div>
             <h3>Cooperation</h3>
-            <p>Contribute, create, and spread the vision together.</p>
+            <p>Contribute, create, and carry the vision forward together.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">03</div>
             <h3>Ambition</h3>
-            <p>$1B is the shared target, not a promise. We aim high.</p>
+            <p>$1B is the shared target — a direction, not a promise.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">04</div>
@@ -140,7 +139,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section shell" id="vibe">
+      <section className="section shell" id="features">
         <div className="section-label">Why it matters</div>
         <h2>
           Built for people,
@@ -148,36 +147,36 @@ export default function Home() {
           <span className="muted">not just charts.</span>
         </h2>
         <p className="section-lead">
-          Memes, makers, and open books. The best communities make room for both
-          the silly and the serious.
+          Culture, participation, and transparency. The strongest communities
+          balance energy with substance.
         </p>
 
         <div className="feat-grid">
           <article className="feat">
             <div className="feat-num">01</div>
-            <h3>Memes bring us together</h3>
+            <h3>Culture first</h3>
             <p>
-              Come for the fun. Stay for the people, ideas, and things we make
-              along the way.
+              Memes and energy bring people in. Shared purpose is what keeps
+              them.
             </p>
-            <span style={{ fontSize: 12, color: "var(--dim)" }}>Good energy only</span>
           </article>
           <article className="feat">
             <div className="feat-num">02</div>
-            <h3>Everyone gets a voice</h3>
+            <h3>Voice for everyone</h3>
             <p>
-              Share ideas, explore community polls, and help shape what comes
-              next.
+              Ideas, polls, and participation — so the community can shape what
+              comes next.
             </p>
-            <Link href="/governance">Visit governance →</Link>
+            <Link href="/governance">Governance →</Link>
           </article>
           <article className="feat">
             <div className="feat-num">03</div>
-            <h3>Open books, always</h3>
+            <h3>Open books</h3>
             <p>
-              Verified on-chain data when connected. No made-up numbers. Ever.
+              On-chain data when available. No fabricated figures. Verify
+              everything yourself.
             </p>
-            <Link href="/treasury">See the treasury →</Link>
+            <Link href="/treasury">Treasury →</Link>
           </article>
         </div>
       </section>
@@ -187,41 +186,41 @@ export default function Home() {
         <h2>
           Three steps.
           <br />
-          <span className="muted">No rush.</span>
+          <span className="muted">Take your time.</span>
         </h2>
         <p className="section-lead">
-          New to Solana? Start with the community. Take your time. Always
-          double-check links and addresses.
+          New to Solana? Start with the community. Always verify links and
+          addresses before interacting.
         </p>
 
         <div className="steps">
           <div className="step">
             <div className="step-num">1</div>
-            <h3>Get a wallet</h3>
+            <h3>Wallet</h3>
             <p>
-              Phantom, Solflare, or any wallet you trust. Recovery phrase stays
-              private.
+              Use a wallet you trust. Your recovery phrase never leaves your
+              device.
             </p>
           </div>
           <div className="step">
             <div className="step-num">2</div>
-            <h3>Say hi</h3>
+            <h3>Community</h3>
             <p>
-              Join the community. Meet the people. Get a feel for the project.
+              Join Telegram, meet the people, and learn how the project operates.
             </p>
           </div>
           <div className="step">
             <div className="step-num">3</div>
-            <h3>Explore</h3>
+            <h3>Verify</h3>
             <p>
-              Check token details and on-chain data before making any decisions.
+              Review token data and on-chain records before making any decision.
             </p>
           </div>
         </div>
 
-        <div style={{ marginTop: 32 }}>
+        <div style={{ marginTop: 36 }}>
           <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
-            Join Telegram →
+            Join Telegram
           </a>
         </div>
       </section>
@@ -231,17 +230,17 @@ export default function Home() {
         <div className="trans-grid">
           <div>
             <h2>
-              Trust the crew.
+              Trust, then
               <br />
-              <span className="muted">Verify the facts.</span>
+              <span className="muted">verify.</span>
             </h2>
-            <p className="section-lead" style={{ marginTop: 12, marginBottom: 24 }}>
-              No mystery numbers. No made-up stats. Explore on-chain records and
-              check addresses yourself.
+            <p className="section-lead" style={{ marginTop: 12, marginBottom: 28 }}>
+              No mystery numbers. Explore on-chain records and confirm addresses
+              independently.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               <Link href="/dashboard" className="btn btn-primary">
-                Token data →
+                Token data
               </Link>
               <Link href="/treasury" className="btn btn-secondary">
                 Treasury
@@ -257,7 +256,7 @@ export default function Home() {
               </span>
             </div>
             <div className="addr-body">
-              <span>Solana mint</span>
+              <span>Solana mint address</span>
               {mint ? (
                 <>
                   <code>{mint}</code>
@@ -272,32 +271,38 @@ export default function Home() {
               ) : (
                 <>
                   <strong
-                    style={{ display: "block", marginBottom: 6, fontSize: 14 }}
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontSize: 14,
+                      color: "#fff",
+                      fontWeight: 600,
+                    }}
                   >
-                    Keeping it honest.
+                    Not configured yet
                   </strong>
-                  <p style={{ margin: 0, fontSize: 12, color: "var(--muted)" }}>
-                    Official mint address appears here once configured and
+                  <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.55 }}>
+                    The official mint will appear here once it is set and
                     verified.
                   </p>
                 </>
               )}
             </div>
-            <div className="addr-foot">On-chain data · not vibes alone</div>
+            <div className="addr-foot">On-chain · independently verifiable</div>
           </div>
         </div>
       </section>
 
       <section className="final shell">
         <h2>
-          Together, We Grow.
+          Together, we grow.
           <br />
-          Together, We Make History.
+          Together, we make history.
         </h2>
-        <p>Room for one more. Let’s build it.</p>
+        <p>There is room for one more.</p>
         <div className="final-actions">
           <a className="btn btn-primary" href={telegram} target="_blank" rel="noreferrer">
-            Join the movement →
+            Join the movement
           </a>
           <a className="btn btn-secondary" href={xUrl} target="_blank" rel="noreferrer">
             Follow on X
@@ -321,8 +326,9 @@ export default function Home() {
           <Link href="/donate">Donate</Link>
         </div>
         <p className="disclaimer">
-          Crypto is risky. No promises of returns. The $1B market-cap figure is
-          a shared vision, not a guarantee.
+          Cryptocurrency involves risk. Nothing on this site is financial advice
+          or a promise of returns. The $1B market-cap figure is a shared
+          long-term vision, not a guarantee.
         </p>
         <span>© {new Date().getFullYear()} COMMUNITY Coin</span>
       </footer>
