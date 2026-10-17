@@ -15,7 +15,7 @@ export default function Home() {
   return <main>
     <nav className="nav shell">
       <Link className="brand" href="/"><span className="brand-mark">C</span><span>COMMUNITY<span className="brand-light">COIN</span></span></Link>
-      <div className="nav-links"><a href="#mission">Mission</a><a href="#ecosystem">Ecosystem</a><a href="#transparency">Transparency</a><a href="/dashboard">On-chain data</a></div>
+      <div className="nav-links"><a href="#mission">Mission</a><a href="#ecosystem">Ecosystem</a><a href="#transparency">Transparency</a></div>
       <a className="nav-cta" href="#join">Join community <span>↗</span></a>
     </nav>
     <section className="hero shell">
@@ -40,7 +40,7 @@ export default function Home() {
       <div className="feature-grid" id="ecosystem">{features.map(f=><article className="feature" key={f.n}><span className="feature-n">{f.n}</span><div className="feature-icon">{f.n==="01"?"◈":f.n==="02"?"◎":"✳"}</div><h3>{f.title}</h3><p>{f.body}</p><span className="feature-arrow">↗</span></article>)}</div>
     </section>
     <section className="dark-section" id="transparency"><div className="shell transparency">
-      <div><div className="section-kicker light"><span>02 / THE PROMISE</span><span>NO SMOKE. NO MIRRORS.</span></div><h2>Trust isn’t a slogan.<br/><em>Show the work.</em></h2><p className="dark-lead">We won’t dress placeholders up as facts. Token addresses, treasury movements, and market data will appear here once they’re connected to verified sources.</p><div className="transparency-actions"><a className="button button-lime" href="/dashboard">View on-chain data <span>↗</span></a><a className="transparency-explorer" href="https://explorer.solana.com/" target="_blank" rel="noreferrer">Open Solana Explorer ↗</a></div></div>
+      <div><div className="section-kicker light"><span>02 / THE PROMISE</span><span>NO SMOKE. NO MIRRORS.</span></div><h2>Trust isn’t a slogan.<br/><em>Show the work.</em></h2><p className="dark-lead">We won’t dress placeholders up as facts. Token addresses, treasury movements, and market data will appear here once they’re connected to verified sources.</p><a className="button button-lime" href="https://explorer.solana.com/" target="_blank" rel="noreferrer">Explore Solana <span>↗</span></a></div>
       <div className="ledger"><div className="ledger-head"><span>COMMUNITY LEDGER</span><span className="ledger-status"><i/> INTEGRATION PENDING</span></div><div className="ledger-row"><span>Token mint</span><b>Not configured</b></div><div className="ledger-row"><span>Treasury wallet</span><b>Not configured</b></div><div className="ledger-row"><span>Latest activity</span><b>Awaiting verified feed</b></div><div className="ledger-row"><span>Market data</span><b>Not connected</b></div><div className="ledger-foot">Live data will be sourced from verified on-chain records.<br/>No fabricated balances or transaction history.</div></div>
     </div></section>
     <section className="section shell how"><div className="section-kicker"><span>03 / GET INVOLVED</span><span>YOUR COMMUNITY, YOUR CALL</span></div><div className="how-heading"><h2>There’s room<br/>for <em>you here.</em></h2><p>Whether you’re here to learn, build, create, or contribute, start with the community and grow from there.</p></div><div className="steps">{steps.map(s=><article className="step" key={s.n}><span>{s.n}</span><h3>{s.title}</h3><p>{s.body}</p></article>)}</div></section>
