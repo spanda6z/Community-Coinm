@@ -32,7 +32,6 @@ export default function Home() {
         </a>
       </nav>
 
-      {/* HERO */}
       <section className="hero wrap">
         <div className="hero-img">
           <img src={BANNER} alt="COMMUNITY COIN" />
@@ -59,7 +58,6 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* STATEMENT */}
       <section className="statement wrap">
         <p>
           This belongs to the community. There is no central team controlling
@@ -70,15 +68,14 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* VAULT */}
       <section className="block wrap" id="vault">
         <p className="block-label">Community vault</p>
-        <h2>
-          Feed the community vault.
-        </h2>
+        <h2>Feed the community vault.</h2>
         <p className="block-text">
-          Support memes, events, raids, and community rewards. Voluntary only.
-          Not an investment product — deposits do not generate yield.
+          Funds in the treasury are used for <strong>marketing</strong> and{" "}
+          <strong>airdrops</strong> — growth, visibility, and community
+          rewards. Contributions are voluntary. This is not an investment
+          product and does not generate yield.
         </p>
 
         <div className="split-wide">
@@ -87,30 +84,30 @@ export default function Home() {
               <div className="row">
                 <span className="row-num">01</span>
                 <div>
-                  <h3>Voluntary support</h3>
+                  <h3>Marketing</h3>
                   <p>
-                    Send SOL or tokens to the public treasury when you want to
-                    contribute. No obligation.
+                    Campaigns, content, raids, and visibility so more people
+                    find the community.
                   </p>
                 </div>
               </div>
               <div className="row">
                 <span className="row-num">02</span>
                 <div>
-                  <h3>Fully public</h3>
+                  <h3>Airdrops</h3>
                   <p>
-                    Balance and transactions stay visible on-chain for anyone to
-                    verify.
+                    Community rewards and distributions to active holders and
+                    contributors.
                   </p>
                 </div>
               </div>
               <div className="row">
                 <span className="row-num">03</span>
                 <div>
-                  <h3>Community direction</h3>
+                  <h3>Fully public</h3>
                   <p>
-                    Spending is discussed in Telegram. Movements remain open on
-                    Explorer.
+                    Balance and transactions stay visible on-chain. Anyone can
+                    verify spends.
                   </p>
                 </div>
               </div>
@@ -121,7 +118,8 @@ export default function Home() {
             <p className="label">Treasury wallet</p>
             <p className="addr">{TREASURY}</p>
             <p className="note">
-              Voluntary contributions only. No yield. No guaranteed returns.
+              Used for marketing &amp; airdrops. Voluntary only. No yield. No
+              guaranteed returns.
             </p>
             <a
               className="btn btn-fill"
@@ -137,7 +135,6 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* TELEGRAM */}
       <section className="block wrap" id="telegram">
         <p className="block-label">Telegram</p>
         <h2>
@@ -186,12 +183,9 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* MEMES */}
       <section className="block wrap" id="memes">
         <p className="block-label">Culture</p>
-        <h2>
-          The meme wall.
-        </h2>
+        <h2>The meme wall.</h2>
         <p className="block-text">
           Submit through Telegram. Upvote the best. Weekly winners get featured
           on the site, a Telegram role, an X shoutout, and leaderboard points.
@@ -232,7 +226,6 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* TRANSPARENCY */}
       <section className="block wrap" id="transparency">
         <p className="block-label">On-chain</p>
         <h2>
@@ -267,7 +260,7 @@ export default function Home() {
               )}
             </div>
             <div className="addr-item">
-              <p className="lbl">Community vault</p>
+              <p className="lbl">Community vault · marketing &amp; airdrops</p>
               <code>{TREASURY}</code>
               <a
                 href={`https://explorer.solana.com/address/${TREASURY}`}
@@ -279,11 +272,26 @@ export default function Home() {
             </div>
           </div>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, justifyContent: "center" }}>
-            <Link href="/dashboard" className="btn btn-fill" style={{ alignSelf: "flex-start" }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12,
+              justifyContent: "center",
+            }}
+          >
+            <Link
+              href="/dashboard"
+              className="btn btn-fill"
+              style={{ alignSelf: "flex-start" }}
+            >
               Token data
             </Link>
-            <Link href="/treasury" className="btn btn-line" style={{ alignSelf: "flex-start" }}>
+            <Link
+              href="/treasury"
+              className="btn btn-line"
+              style={{ alignSelf: "flex-start" }}
+            >
               Treasury activity
             </Link>
           </div>
@@ -292,7 +300,6 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* FINAL */}
       <section className="final wrap">
         <h2>
           Together, we grow.
@@ -326,9 +333,9 @@ export default function Home() {
           </a>
         </div>
         <p className="disclaimer">
-          Crypto involves risk. Not financial advice. Vault deposits are
-          voluntary and do not generate yield. The $1B figure is a shared
-          vision, not a guarantee.
+          Crypto involves risk. Not financial advice. Vault funds are for
+          marketing and airdrops only. Deposits are voluntary and do not
+          generate yield. The $1B figure is a shared vision, not a guarantee.
         </p>
         <span>© {new Date().getFullYear()} COMMUNITY Coin</span>
       </footer>
