@@ -14,10 +14,17 @@ bot.command("help", async (ctx) => ctx.reply(
   "COMMUNITY Coin bot commands\n/price — token data status\n/wallet — securely link your own wallet\n/governance — community proposals\n/treasury — public treasury activity\n/tip — tipping setup status\n\nWallet linking and transfers will only be enabled after secure wallet verification and on-chain transaction checks are configured.",
 ));
 bot.command("price", async (ctx) => {
-  if (!process.env.NEXT_PUBLIC_TOKEN_MINT || !process.env.SOLANA_RPC_URL) {
-    return ctx.reply("Live token data is not configured yet. No price is shown rather than inventing one.");
+  if (!site) return ctx.reply("Token data is not configured yet. Set NEXT_PUBLIC_SITE_URL.");
+  try {
+    const response = await fetch(site + "/api/token", { headers: { "Accept": "application/json" }, signal: AbortSignal.timeout(8000) });
+    const data = await response.json() as { configured?: boolean; mint?: string; supply?: { uiAmount?: string }; note?: string; message?: string };
+    if (!response.ok || !data.configured || !data.supply) {
+      return ctx.reply("Live on-chain token data is currently unavailable. " + (data.message || "Check the mint and RPC configuration."));
+    }
+    return ctx.reply("COMMUNITY Coin — verified on-chain data\nMint: " + data.mint + "\nMinted supply: " + data.supply.uiAmount + "\n\nMarket price is not displayed until a trusted market-data source is configured.\n" + (data.note || ""));
+  } catch {
+    return ctx.reply("Could not reach the token data endpoint. Try again later.");
   }
-  return ctx.reply("Token mint and RPC are configured. Visit the project website for verified on-chain supply data. Live market pricing requires a trusted market-data source.");
 });
 bot.command("wallet", async (ctx) => {
   if (!site) return ctx.reply("Wallet linking is not configured yet. Set NEXT_PUBLIC_SITE_URL.");
