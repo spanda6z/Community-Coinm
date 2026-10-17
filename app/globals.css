@@ -29,7 +29,6 @@ img { max-width: 100%; display: block; }
   margin-inline: auto;
 }
 
-/* NAV */
 .nav {
   position: sticky;
   top: 0;
@@ -42,7 +41,6 @@ img { max-width: 100%; display: block; }
   backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
 }
-.nav.scrolled { border-bottom-color: var(--line); }
 .logo {
   font-family: var(--serif);
   font-size: 22px;
@@ -67,7 +65,6 @@ img { max-width: 100%; display: block; }
 }
 .nav-cta:hover { background: var(--fg); color: var(--bg); }
 
-/* HERO */
 .hero {
   padding: 80px 0 60px;
   text-align: center;
@@ -139,7 +136,6 @@ img { max-width: 100%; display: block; }
 }
 .btn-line:hover { border-color: #666; }
 
-/* DIVIDER LINE */
 .rule {
   height: 1px;
   background: var(--line);
@@ -147,7 +143,6 @@ img { max-width: 100%; display: block; }
   margin: 0;
 }
 
-/* SECTIONS */
 .block {
   padding: 88px 0;
 }
@@ -178,7 +173,6 @@ img { max-width: 100%; display: block; }
   margin-bottom: 40px;
 }
 
-/* STATEMENT */
 .statement {
   text-align: center;
   padding: 100px 0;
@@ -202,7 +196,6 @@ img { max-width: 100%; display: block; }
   color: var(--dim);
 }
 
-/* LIST ROWS — elegant instead of cards */
 .rows {
   border-top: 1px solid var(--line);
 }
@@ -233,7 +226,6 @@ img { max-width: 100%; display: block; }
   max-width: 520px;
 }
 
-/* TWO COL */
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -247,7 +239,6 @@ img { max-width: 100%; display: block; }
   align-items: center;
 }
 
-/* VAULT PANEL */
 .vault-panel {
   background: var(--soft);
   border: 1px solid var(--line);
@@ -276,7 +267,6 @@ img { max-width: 100%; display: block; }
   margin-bottom: 24px;
 }
 
-/* COMMANDS — minimal */
 .cmds {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -304,7 +294,6 @@ img { max-width: 100%; display: block; }
   margin: 0;
 }
 
-/* MEME TEASER */
 .meme-teaser {
   text-align: center;
   padding: 56px 32px;
@@ -324,7 +313,6 @@ img { max-width: 100%; display: block; }
   margin-bottom: 28px;
 }
 
-/* ADDRESS BLOCK */
 .addr-block {
   border-top: 1px solid var(--line);
   padding-top: 32px;
@@ -357,7 +345,6 @@ img { max-width: 100%; display: block; }
 }
 .addr-item a:hover { color: #fff; border-color: #666; }
 
-/* FINAL */
 .final {
   text-align: center;
   padding: 100px 0 80px;
@@ -382,7 +369,6 @@ img { max-width: 100%; display: block; }
   flex-wrap: wrap;
 }
 
-/* FOOTER */
 .footer {
   border-top: 1px solid var(--line);
   padding: 36px 0 48px;
@@ -408,7 +394,6 @@ img { max-width: 100%; display: block; }
   max-width: 520px;
 }
 
-/* SUBPAGES keep readable */
 .dashboard, .governance, .treasury, .donate, .link-wallet {
   padding: 48px 0 80px;
   min-height: 60vh;
@@ -524,6 +509,58 @@ img { max-width: 100%; display: block; }
   color: var(--bg);
   border-radius: 999px;
 }
+
+/* VAULT SPENDS LOG */
+.spends-list { border-top: 1px solid var(--line); }
+.spend-row {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+.spend-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.spend-date {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+}
+.spend-tag {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.spend-row h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.spend-row p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  max-width: 520px;
+}
+.spend-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 13px;
+}
+.spend-amt { color: #fff; font-weight: 500; }
+.spend-foot a {
+  color: var(--muted);
+  border-bottom: 1px solid #333;
+  padding-bottom: 1px;
+}
+.spend-foot a:hover { color: #fff; border-color: #666; }
 
 @media (max-width: 720px) {
   .nav-links { display: none; }
