@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VAULT_SPENDS } from "../lib/vault-spends";
 
 const TREASURY =
   process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
@@ -14,6 +15,7 @@ const BANNER =
 
 export default function Home() {
   const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
+  const recentSpends = VAULT_SPENDS.slice(0, 3);
 
   return (
     <main>
@@ -43,15 +45,15 @@ export default function Home() {
           <em>One billion-dollar vision.</em>
         </h1>
         <p className="hero-lead">
-          No CEO. No private allocation. Holders create the memes, run the
-          raids, and shape the movement.
+          Holders make the culture. The vault funds the push — marketing and
+          airdrops only.
         </p>
         <div className="hero-actions">
           <a className="btn btn-fill" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join the movement
           </a>
           <a className="btn btn-line" href="#vault">
-            Feed the vault
+            Fuel marketing &amp; airdrops
           </a>
         </div>
       </section>
@@ -60,22 +62,21 @@ export default function Home() {
 
       <section className="statement wrap">
         <p>
-          This belongs to the community. There is no central team controlling
-          the culture — only people building it together.
+          Community-owned on Solana. No CEO. No private allocation. Vault →
+          marketing &amp; airdrops. No yield.
         </p>
-        <span>Community owned · Public by design</span>
+        <span>Verify everything on-chain</span>
       </section>
 
       <hr className="rule" />
 
       <section className="block wrap" id="vault">
         <p className="block-label">Community vault</p>
-        <h2>Feed the community vault.</h2>
+        <h2>Fuel marketing &amp; airdrops.</h2>
         <p className="block-text">
-          Funds in the treasury are used for <strong>marketing</strong> and{" "}
-          <strong>airdrops</strong> — growth, visibility, and community
-          rewards. Contributions are voluntary. This is not an investment
-          product and does not generate yield.
+          Treasury funds pay for growth and community rewards — not salaries in
+          the dark. Contributions are voluntary. Not an investment product. No
+          yield.
         </p>
 
         <div className="split-wide">
@@ -86,8 +87,8 @@ export default function Home() {
                 <div>
                   <h3>Marketing</h3>
                   <p>
-                    Campaigns, content, raids, and visibility so more people
-                    find the community.
+                    Raids, content, creators, and visibility so more people find
+                    the community.
                   </p>
                 </div>
               </div>
@@ -96,18 +97,18 @@ export default function Home() {
                 <div>
                   <h3>Airdrops</h3>
                   <p>
-                    Community rewards and distributions to active holders and
-                    contributors.
+                    Distributions to active holders and contributors who show
+                    up.
                   </p>
                 </div>
               </div>
               <div className="row">
                 <span className="row-num">03</span>
                 <div>
-                  <h3>Fully public</h3>
+                  <h3>Public spends</h3>
                   <p>
-                    Balance and transactions stay visible on-chain. Anyone can
-                    verify spends.
+                    Meaningful spends are logged with context. On-chain txs stay
+                    verifiable.
                   </p>
                 </div>
               </div>
@@ -118,18 +119,72 @@ export default function Home() {
             <p className="label">Treasury wallet</p>
             <p className="addr">{TREASURY}</p>
             <p className="note">
-              Used for marketing &amp; airdrops. Voluntary only. No yield. No
-              guaranteed returns.
+              Marketing &amp; airdrops only. Voluntary. No yield. No guaranteed
+              returns.
             </p>
-            <a
-              className="btn btn-fill"
-              href={`https://explorer.solana.com/address/${TREASURY}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              View on Explorer
-            </a>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <a
+                className="btn btn-fill"
+                href={`https://explorer.solana.com/address/${TREASURY}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on Explorer
+              </a>
+              <Link className="btn btn-line" href="/spends">
+                Vault spends log
+              </Link>
+            </div>
           </div>
+        </div>
+
+        <div style={{ marginTop: 48 }}>
+          <p className="block-label">Recent spends</p>
+          {recentSpends.length === 0 ? (
+            <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.6 }}>
+              No spends logged yet. When the vault pays for marketing or an
+              airdrop, it will be listed here and on the{" "}
+              <Link href="/spends" style={{ borderBottom: "1px solid #444" }}>
+                spends page
+              </Link>
+              .
+            </p>
+          ) : (
+            <div className="spends-list">
+              {recentSpends.map((s) => (
+                <article key={s.id} className="spend-row">
+                  <div className="spend-meta">
+                    <span className="spend-date">{s.date}</span>
+                    <span className={`spend-tag tag-${s.category}`}>
+                      {s.category}
+                    </span>
+                  </div>
+                  <h3>{s.title}</h3>
+                  <p>{s.detail}</p>
+                  <div className="spend-foot">
+                    <span className="spend-amt">{s.amountLabel}</span>
+                    {s.txUrl ? (
+                      <a href={s.txUrl} target="_blank" rel="noreferrer">
+                        View tx →
+                      </a>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+              <Link
+                href="/spends"
+                style={{
+                  display: "inline-block",
+                  marginTop: 16,
+                  fontSize: 13,
+                  color: "var(--muted)",
+                  borderBottom: "1px solid #333",
+                }}
+              >
+                Full spends log →
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -141,40 +196,40 @@ export default function Home() {
           Tip, play, <em>and stay active.</em>
         </h2>
         <p className="block-text">
-          Chat is where the culture lives. Commands below power community
-          activity — starting simple, expanding carefully.
+          Chat is where the culture lives. Daily habits beat empty feature
+          lists.
         </p>
 
         <div className="cmds">
           <div className="cmd">
-            <code>/tip @user 100</code>
-            <p>Recognize people who add value in the room.</p>
-          </div>
-          <div className="cmd">
-            <code>/rain</code>
-            <p>Drop energy into an active chat session.</p>
-          </div>
-          <div className="cmd">
             <code>/daily</code>
-            <p>Simple check-in to keep the community present.</p>
+            <p>Check in. Build the streak.</p>
           </div>
           <div className="cmd">
-            <code>/quiz</code>
-            <p>Light games that reward attention and knowledge.</p>
+            <code>/tip @user 50</code>
+            <p>Recognize people who add value.</p>
           </div>
           <div className="cmd">
-            <code>/memebattle</code>
-            <p>Compete in chat — best memes feed the wall.</p>
+            <code>/rain 100</code>
+            <p>Share points with active chatters.</p>
           </div>
           <div className="cmd">
             <code>/leaderboard</code>
-            <p>Track contribution and standing over time.</p>
+            <p>See who shows up.</p>
+          </div>
+          <div className="cmd">
+            <code>/memebattle</code>
+            <p>Compete — winners feed the wall.</p>
+          </div>
+          <div className="cmd">
+            <code>/vault</code>
+            <p>Treasury address + purpose.</p>
           </div>
         </div>
 
         <p className="block-text" style={{ marginTop: 36, marginBottom: 24 }}>
-          Real token tipping only after secure wallet handling and moderation
-          are in place.
+          New members pass a maths check in 3 minutes or get removed. Points are
+          for activity — not tokens.
         </p>
         <a className="btn btn-fill" href={TELEGRAM} target="_blank" rel="noreferrer">
           Open Telegram
@@ -187,8 +242,8 @@ export default function Home() {
         <p className="block-label">Culture</p>
         <h2>The meme wall.</h2>
         <p className="block-text">
-          Submit through Telegram. Upvote the best. Weekly winners get featured
-          on the site, a Telegram role, an X shoutout, and leaderboard points.
+          Submit in Telegram. Upvote the best. Weekly winners get the site,
+          a role, an X shoutout, and points.
         </p>
 
         <div className="rows" style={{ marginBottom: 40 }}>
@@ -196,30 +251,30 @@ export default function Home() {
             <span className="row-num">01</span>
             <div>
               <h3>Submit</h3>
-              <p>Drop memes in Telegram. The wall is built by holders.</p>
+              <p>Drop memes in chat. Holders build the wall.</p>
             </div>
           </div>
           <div className="row">
             <span className="row-num">02</span>
             <div>
-              <h3>Upvote</h3>
-              <p>Creator handle, reaction count, and community signal.</p>
+              <h3>Battle</h3>
+              <p>Use /memebattle — short contests, clear winners.</p>
             </div>
           </div>
           <div className="row">
             <span className="row-num">03</span>
             <div>
               <h3>Feature</h3>
-              <p>Meme of the Week takes the spotlight across the project.</p>
+              <p>Meme of the Week across site, Telegram, and X.</p>
             </div>
           </div>
         </div>
 
         <div className="meme-teaser">
           <h3>Gallery opening soon</h3>
-          <p>First submissions from Telegram will appear here.</p>
+          <p>First community submissions will appear here.</p>
           <a className="btn btn-fill" href={TELEGRAM} target="_blank" rel="noreferrer">
-            Submit a meme
+            Submit in Telegram
           </a>
         </div>
       </section>
@@ -232,7 +287,7 @@ export default function Home() {
           Trust, then <em>verify.</em>
         </h2>
         <p className="block-text">
-          No mystery numbers. Confirm addresses and activity yourself.
+          No mystery numbers. Confirm mint, vault, and spends yourself.
         </p>
 
         <div className="split">
@@ -260,7 +315,7 @@ export default function Home() {
               )}
             </div>
             <div className="addr-item">
-              <p className="lbl">Community vault · marketing &amp; airdrops</p>
+              <p className="lbl">Vault · marketing &amp; airdrops</p>
               <code>{TREASURY}</code>
               <a
                 href={`https://explorer.solana.com/address/${TREASURY}`}
@@ -294,6 +349,13 @@ export default function Home() {
             >
               Treasury activity
             </Link>
+            <Link
+              href="/spends"
+              className="btn btn-line"
+              style={{ alignSelf: "flex-start" }}
+            >
+              Spends log
+            </Link>
           </div>
         </div>
       </section>
@@ -324,7 +386,7 @@ export default function Home() {
         <div className="footer-links">
           <Link href="/dashboard">On-chain</Link>
           <Link href="/treasury">Treasury</Link>
-          <Link href="/governance">Governance</Link>
+          <Link href="/spends">Spends</Link>
           <a href={TELEGRAM} target="_blank" rel="noreferrer">
             Telegram
           </a>
