@@ -1,14 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const TREASURY =
   process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
   "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
 
+type VaultData = {
+  ok?: boolean;
+  solFormatted?: string;
+};
+
 export default function DonatePage() {
   const [copied, setCopied] = useState(false);
+  const [balance, setBalance] = useState<string>("—");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/vault")
+      .then((r) => r.json())
+      .then((d: VaultData) => {
+        if (!cancelled && d.ok && d.solFormatted) setBalance(d.solFormatted);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function copyAddress() {
     try {
@@ -21,7 +40,7 @@ export default function DonatePage() {
   }
 
   return (
-    <main className="wrap" style={{ paddingTop: 48, paddingBottom: 80 }}>
+    <main className="wrap donate">
       <Link className="dashboard-back" href="/">
         ← Back
       </Link>
@@ -44,13 +63,26 @@ export default function DonatePage() {
       </p>
 
       <div className="vault-panel" style={{ maxWidth: 480 }}>
-        <p className="label">Treasury wallet</p>
+        <div className="vault-panel-top">
+          <p className="label">Vault balance</p>
+          <span className="live-badge">
+            <span className="live-dot" aria-hidden />
+            Live
+          </span>
+        </div>
+        <p className="vault-balance">
+          <span className="vault-sol">{balance}</span>
+          <span className="vault-unit"> SOL</span>
+        </p>
+        <p className="label" style={{ marginTop: 24 }}>
+          Treasury wallet
+        </p>
         <p className="addr">{TREASURY}</p>
         <p className="note">
           Only send SOL (or assets you have verified) on Solana. Wrong network
           or token can mean permanent loss. Never share a seed phrase.
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+        <div className="vault-actions">
           <button type="button" className="btn btn-fill" onClick={copyAddress}>
             {copied ? "Copied" : "Copy address"}
           </button>
