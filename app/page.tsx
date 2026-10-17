@@ -10,7 +10,6 @@ const links = [
 const BANNER =
   "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
 
-/** Official community treasury wallet (public). */
 const TREASURY =
   process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
   "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
@@ -34,8 +33,9 @@ export default function Home() {
         </Link>
         <div className="nav-links">
           <a href="#vision">Vision</a>
-          <a href="#features">Features</a>
-          <a href="#join">Join</a>
+          <a href="#vault">Vault</a>
+          <a href="#telegram">Telegram</a>
+          <a href="#memes">Memes</a>
           <a href="#transparency">Transparency</a>
         </div>
         <div className="nav-right">
@@ -45,13 +45,14 @@ export default function Home() {
         </div>
       </nav>
 
+      {/* HERO */}
       <section className="hero shell">
         <div className="hero-banner">
           <img src={BANNER} alt="COMMUNITY COIN" />
         </div>
 
         <div className="hero-badge">
-          <i /> Community-powered · Solana
+          <i /> Community-owned · Solana
         </div>
 
         <h1>
@@ -61,16 +62,16 @@ export default function Home() {
         </h1>
 
         <p className="hero-sub">
-          A community-powered journey on Solana. Built through cooperation,
-          belief, and collective effort — not hype alone.
+          Belongs to the community. No CEO. No private allocation. Holders
+          create the memes, run the raids, and shape the movement.
         </p>
 
         <div className="hero-actions">
           <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
             Join the movement
           </a>
-          <a className="btn btn-secondary" href="#vision">
-            Our vision
+          <a className="btn btn-secondary" href="#vault">
+            Feed the vault
           </a>
         </div>
       </section>
@@ -79,116 +80,232 @@ export default function Home() {
         <div className="ticker-track">
           {Array.from({ length: 2 }, (_, i) => (
             <span key={i}>
-              Together We Grow <b>·</b> Together We Make History <b>·</b> One
-              Community <b>·</b> One Goal <b>·</b> $1B Vision <b>·</b>
+              Community Owned <b>·</b> No CEO <b>·</b> Feed The Vault <b>·</b>{" "}
+              Tip · Play · Earn <b>·</b> Meme Wall <b>·</b> Open Books <b>·</b>
             </span>
           ))}
         </div>
       </div>
 
+      {/* OWNERSHIP */}
       <section className="section shell" id="vision">
-        <div className="section-label">Shared ambition</div>
+        <div className="section-label">Community owned</div>
         <h2>
-          One community.
+          No central team
           <br />
-          <span className="muted">One goal.</span>
+          <span className="muted">controlling the culture.</span>
         </h2>
         <p className="section-lead">
-          A journey we build together. Every participant has a role to play.
+          Holders create the memes, run the raids, and shape the movement. The
+          culture is built in public — by the people in the chat.
         </p>
-
-        <div className="vision-row">
-          <div className="mc-box">
-            <div className="mc-label">Shared target</div>
-            <div className="mc-num">$1B</div>
-            <div className="mc-unit">Market Cap</div>
-            <p className="mc-note">
-              A long-term vision — not a guarantee of financial returns.
-            </p>
-          </div>
-          <div className="vision-copy">
-            <p>
-              Growth is driven by cooperation and collective effort — not by a
-              single founder or early cohort. Everyone matters.
-            </p>
-            <p>
-              The objective is clear: build a community people are proud to have
-              been part of. History is made together.
-            </p>
-            <div style={{ marginTop: 24 }}>
-              <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
-                Join the movement
-              </a>
-            </div>
-          </div>
-        </div>
 
         <div className="pillars">
           <article className="pillar">
             <div className="pillar-num">01</div>
-            <h3>Togetherness</h3>
-            <p>Everyone matters — not only founders or early holders.</p>
+            <h3>No CEO</h3>
+            <p>No single operator owns the culture or the narrative.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">02</div>
-            <h3>Cooperation</h3>
-            <p>Contribute, create, and carry the vision forward together.</p>
+            <h3>No private allocation</h3>
+            <p>The movement is not structured around a hidden team bag.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">03</div>
-            <h3>Ambition</h3>
-            <p>$1B is the shared target — a direction, not a promise.</p>
+            <h3>Holder-built</h3>
+            <p>Memes, raids, and energy come from the community itself.</p>
           </article>
           <article className="pillar">
             <div className="pillar-num">04</div>
-            <h3>History</h3>
-            <p>Build something people will remember being part of.</p>
+            <h3>$1B vision</h3>
+            <p>A shared direction — not a promise of returns.</p>
           </article>
         </div>
       </section>
 
-      <section className="section shell" id="features">
-        <div className="section-label">Why it matters</div>
+      {/* VAULT */}
+      <section className="section shell" id="vault">
+        <div className="section-label">Community vault</div>
         <h2>
-          Built for people,
+          Feed the
           <br />
-          <span className="muted">not just charts.</span>
+          <span className="muted">community vault.</span>
         </h2>
         <p className="section-lead">
-          Culture, participation, and transparency. The strongest communities
-          balance energy with substance.
+          Support the vault to help fund memes, events, raids, and community
+          rewards. Voluntary only. Not an investment product.
+        </p>
+
+        <div className="vision-row">
+          <div className="mc-box">
+            <div className="mc-label">Public treasury</div>
+            <div
+              className="mc-num"
+              style={{ fontSize: "clamp(14px, 2.4vw, 18px)", letterSpacing: "-0.02em", wordBreak: "break-all", lineHeight: 1.35 }}
+            >
+              {TREASURY.slice(0, 6)}…{TREASURY.slice(-4)}
+            </div>
+            <div className="mc-unit">On-chain · viewable</div>
+            <p className="mc-note">
+              Deposits do not generate yield or guaranteed returns.
+            </p>
+          </div>
+          <div className="vision-copy">
+            <p>
+              Anyone can voluntarily send SOL or tokens to the public treasury
+              wallet. Balance and transactions are visible on-chain.
+            </p>
+            <p>
+              Spending direction is shaped by the community — via Telegram
+              discussion and simple proposals. All movements remain public on
+              Solscan / Explorer.
+            </p>
+            <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <a
+                className="btn btn-primary"
+                href={`https://explorer.solana.com/address/${TREASURY}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View treasury
+              </a>
+              <Link href="/treasury" className="btn btn-secondary">
+                Activity
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="feat-grid" style={{ marginTop: 12 }}>
+          <article className="feat">
+            <div className="feat-num">01</div>
+            <h3>Voluntary sends</h3>
+            <p>SOL or tokens to a public wallet. No obligation. No locked deposit product.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">02</div>
+            <h3>Public balance</h3>
+            <p>Treasury address and history stay open for anyone to inspect.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">03</div>
+            <h3>Community direction</h3>
+            <p>Proposals and discussion in Telegram. Spends remain transparent on-chain.</p>
+          </article>
+        </div>
+      </section>
+
+      {/* TELEGRAM */}
+      <section className="section shell" id="telegram">
+        <div className="section-label">Telegram</div>
+        <h2>
+          Tip, play,
+          <br />
+          <span className="muted">and stay active.</span>
+        </h2>
+        <p className="section-lead">
+          Chat is where the culture lives. Commands below are the roadmap for
+          community activity — starting simple, expanding carefully.
+        </p>
+
+        <div className="feat-grid">
+          <article className="feat">
+            <div className="feat-num">/tip</div>
+            <h3>Tip members</h3>
+            <p>
+              <code style={{ color: "#ccc" }}>/tip @user 100</code> — recognize
+              people who add value in chat.
+            </p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">/rain</div>
+            <h3>Rain the chat</h3>
+            <p>Drop energy into an active room and keep the session moving.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">/daily</div>
+            <h3>Daily check-in</h3>
+            <p>Simple recurring habit to keep the community present.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">/quiz</div>
+            <h3>Quizzes</h3>
+            <p>Light games that reward attention and knowledge of the project.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">/memebattle</div>
+            <h3>Meme battles</h3>
+            <p>Compete in chat. Best memes feed the wall and the culture.</p>
+          </article>
+          <article className="feat">
+            <div className="feat-num">/leaderboard</div>
+            <h3>Leaderboard</h3>
+            <p>Track contribution, activity, and standing in the community.</p>
+          </article>
+        </div>
+
+        <p className="section-lead" style={{ marginTop: 28, marginBottom: 20 }}>
+          Real token tipping only ships after secure wallet handling and
+          moderation controls are in place. Until then, points-based activity
+          keeps the chat alive.
+        </p>
+        <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
+          Open Telegram
+        </a>
+      </section>
+
+      {/* MEME WALL */}
+      <section className="section shell" id="memes">
+        <div className="section-label">Culture</div>
+        <h2>
+          The meme wall.
+          <br />
+          <span className="muted">Built by holders.</span>
+        </h2>
+        <p className="section-lead">
+          Submit memes via Telegram. The best rise on the wall. Weekly winners
+          get the spotlight.
         </p>
 
         <div className="feat-grid">
           <article className="feat">
             <div className="feat-num">01</div>
-            <h3>Culture first</h3>
-            <p>
-              Memes and energy bring people in. Shared purpose is what keeps
-              them.
-            </p>
+            <h3>Submit</h3>
+            <p>Drop memes in Telegram or through the community form when live.</p>
           </article>
           <article className="feat">
             <div className="feat-num">02</div>
-            <h3>Voice for everyone</h3>
-            <p>
-              Ideas, polls, and participation — so the community can shape what
-              comes next.
-            </p>
-            <Link href="/governance">Governance →</Link>
+            <h3>Upvote</h3>
+            <p>Each card shows the creator, upvotes, and community reaction.</p>
           </article>
           <article className="feat">
             <div className="feat-num">03</div>
-            <h3>Open books</h3>
+            <h3>Feature</h3>
             <p>
-              On-chain data when available. No fabricated figures. Verify
-              everything yourself.
+              Weekly Meme of the Week — site feature, Telegram role, X shoutout,
+              leaderboard points.
             </p>
-            <Link href="/treasury">Treasury →</Link>
           </article>
+        </div>
+
+        <div
+          className="addr-card"
+          style={{ marginTop: 28, textAlign: "center", padding: "40px 24px" }}
+        >
+          <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 8 }}>
+            Meme wall gallery
+          </p>
+          <p style={{ color: "#fff", fontWeight: 600, fontSize: 16, marginBottom: 20 }}>
+            Coming online with the first community submissions
+          </p>
+          <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
+            Submit in Telegram
+          </a>
         </div>
       </section>
 
+      {/* JOIN */}
       <section className="section shell" id="join">
         <div className="section-label">Get started</div>
         <h2>
@@ -205,24 +322,17 @@ export default function Home() {
           <div className="step">
             <div className="step-num">1</div>
             <h3>Wallet</h3>
-            <p>
-              Use a wallet you trust. Your recovery phrase never leaves your
-              device.
-            </p>
+            <p>Use a wallet you trust. Recovery phrase stays on your device.</p>
           </div>
           <div className="step">
             <div className="step-num">2</div>
             <h3>Community</h3>
-            <p>
-              Join Telegram, meet the people, and learn how the project operates.
-            </p>
+            <p>Join Telegram. Meet the people. Learn how the project moves.</p>
           </div>
           <div className="step">
             <div className="step-num">3</div>
             <h3>Verify</h3>
-            <p>
-              Review token data and on-chain records before making any decision.
-            </p>
+            <p>Check mint, treasury, and on-chain data before any decision.</p>
           </div>
         </div>
 
@@ -233,6 +343,7 @@ export default function Home() {
         </div>
       </section>
 
+      {/* TRANSPARENCY */}
       <section className="section shell" id="transparency">
         <div className="section-label">Transparency</div>
         <div className="trans-grid">
@@ -298,8 +409,7 @@ export default function Home() {
                         lineHeight: 1.55,
                       }}
                     >
-                      The official mint will appear here once it is set and
-                      verified.
+                      The official mint will appear here once set and verified.
                     </p>
                   </>
                 )}
@@ -309,7 +419,7 @@ export default function Home() {
 
             <div className="addr-card">
               <div className="addr-head">
-                <span>Treasury</span>
+                <span>Community vault</span>
                 <span className="live">Official</span>
               </div>
               <div className="addr-body">
@@ -323,12 +433,15 @@ export default function Home() {
                   View on Explorer →
                 </a>
               </div>
-              <div className="addr-foot">Community treasury · public address</div>
+              <div className="addr-foot">
+                Voluntary support only · no yield promised
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      {/* FINAL */}
       <section className="final shell">
         <h2>
           Together, we grow.
@@ -338,7 +451,7 @@ export default function Home() {
         <p>There is room for one more.</p>
         <div className="final-actions">
           <a className="btn btn-primary" href={TELEGRAM} target="_blank" rel="noreferrer">
-            Join the movement
+            Join Telegram
           </a>
           <a className="btn btn-secondary" href={X_URL} target="_blank" rel="noreferrer">
             Follow on X
@@ -359,12 +472,18 @@ export default function Home() {
               {l.label}
             </Link>
           ))}
-          <Link href="/donate">Donate</Link>
+          <a href={TELEGRAM} target="_blank" rel="noreferrer">
+            Telegram
+          </a>
+          <a href={X_URL} target="_blank" rel="noreferrer">
+            X
+          </a>
         </div>
         <p className="disclaimer">
           Cryptocurrency involves risk. Nothing on this site is financial advice
-          or a promise of returns. The $1B market-cap figure is a shared
-          long-term vision, not a guarantee.
+          or a promise of returns. Vault deposits are voluntary and do not
+          generate yield. The $1B market-cap figure is a shared long-term vision,
+          not a guarantee.
         </p>
         <span>© {new Date().getFullYear()} COMMUNITY Coin</span>
       </footer>
