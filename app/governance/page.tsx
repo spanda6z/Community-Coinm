@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 type Proposal = { id: string; title: string; description: string; status: string; createdAt: string; endsAt: string | null; voteCount: number };
-type TelegramWebApp = { initData: string };
+type TelegramWebApp = { initData: string; ready: () => void; expand: () => void };
 declare global { interface Window { Telegram?: { WebApp?: TelegramWebApp } } }
 
 export default function GovernancePage() {
