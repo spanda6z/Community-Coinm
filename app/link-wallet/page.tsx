@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useState } from "react";
 
 type TelegramWebApp = { initData: string; ready: () => void; expand: () => void };
@@ -69,6 +70,8 @@ export default function LinkWalletPage() {
   }
 
   return (
+    <>
+    <Script src="https://telegram.org/js/telegram-web-app.js" strategy="afterInteractive" />
     <main className="site-shell">
       <section className="hero-section" style={{ maxWidth: 760, margin: "0 auto", paddingTop: 72 }}>
         <a className="eyebrow" href="/">← COMMUNITY Coin</a>
@@ -86,5 +89,6 @@ export default function LinkWalletPage() {
         <p className="hero-copy" style={{ fontSize: 14, marginTop: 24 }}>Only sign the message shown for this COMMUNITY Coin domain. Never approve a transaction or share a recovery phrase to link a wallet.</p>
       </section>
     </main>
+    </>
   );
 }
