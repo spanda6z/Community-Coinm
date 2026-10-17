@@ -1,21 +1,28 @@
 # COMMUNITY Coin
 
-> Not a one-man coin. A community movement.
+A community-first Solana project website and Telegram bot foundation.
 
-A community-first Solana token project. This repository starts with the website foundation and a secure architecture for the Telegram community bot.
+## Run locally
+1. Install Node.js 20 or newer.
+2. Copy `.env.example` to `.env.local` and configure only values you have verified.
+3. Run `npm install`.
+4. Run `npm run dev` and open http://localhost:3000.
 
-## Planned modules
-- Community website: live token data, tokenomics, treasury transparency, governance, and community links.
-- Telegram bot: price snapshots, moderation, member tips, wallet linking, donations, and polls.
-- Backend: verified Solana transaction status, PostgreSQL persistence, rate limiting, and audit metadata.
+## Telegram bot
+Set `TELEGRAM_BOT_TOKEN` in your environment and run `npm run bot`. The initial bot exposes `/start`, `/help`, `/price`, and `/tip`. Transfer execution is intentionally disabled until the secure wallet-linking, database, and transaction-verification layers are implemented.
 
-## Security
-- Never ask for or store seed phrases/private keys.
-- Wallet transfers must be signed by users in their own wallet through a secure HTTPS web flow.
-- Never claim a transfer succeeded before verifying its signature and on-chain confirmation.
-- Use a multisig treasury and publish the verified address.
-- Market data, balances, and holder counts must come from configured, trusted sources—not mock values presented as real.
+## API
+- `GET /api/health`: reports whether required integration settings exist.
+- `GET /api/token`: when `NEXT_PUBLIC_TOKEN_MINT` and `SOLANA_RPC_URL` are configured, fetches verified token supply and largest token accounts from Solana RPC. It does not fabricate market prices or claim largest accounts are unique holders.
 
-## Getting started
+## Security principles
+- Never request or store seed phrases or private keys.
+- Wallet transfers must be signed in the user's own wallet through a secure HTTPS web flow.
+- Verify the mint, destination, amount, signature, and on-chain confirmation before recording a transfer as complete.
+- Use idempotency protection for transaction processing and rate limits for bot commands.
+- Use a multisig treasury; governance polls are not a substitute for signer approvals.
+- Do not publish fake market prices, balances, holder counts, or treasury activity.
+- Keep secrets out of source control and out of all `NEXT_PUBLIC_*` variables.
 
-This initial scaffold is a static Next.js foundation. Install dependencies with `npm install` and run `npm run dev`. Solana and Telegram integrations require environment configuration and will be added in subsequent implementation steps.
+## Current status
+The public landing page and initial read-only Solana API route are implemented. Token mint, RPC, Telegram bot token, database, official social links, and market-data source are not assumed or invented. Wallet linking, tipping, donation execution, governance persistence, and treasury indexing remain to be implemented before production use.
