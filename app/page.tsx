@@ -15,7 +15,7 @@ export default function Home() {
   return <main>
     <nav className="nav shell">
       <Link className="brand" href="/"><span className="brand-mark">C</span><span>COMMUNITY<span className="brand-light">COIN</span></span></Link>
-      <div className="nav-links"><a href="#mission">Mission</a><a href="#ecosystem">Ecosystem</a><a href="#transparency">Transparency</a><a href="/dashboard">On-chain data</a><a href="/link-wallet">Link wallet</a><a href="/governance">Governance</a><a href="/treasury">Treasury</a></div>
+      <div className="nav-links"><a href="#mission">Mission</a><a href="#ecosystem">Ecosystem</a><a href="#transparency">Transparency</a><a href="/dashboard">On-chain data</a><a href="/link-wallet">Link wallet</a><a href="/governance">Governance</a><a href="/treasury">Treasury</a><a href="/donate">Donate</a></div>
       <a className="nav-cta" href="#join">Join community <span>↗</span></a>
     </nav>
     <section className="hero shell">
