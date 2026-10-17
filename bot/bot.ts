@@ -1,5 +1,10 @@
 import { Bot, InlineKeyboard, Context, webhookCallback } from "grammy";
-import { Keypair, PublicKey, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import {
+  Keypair,
+  PublicKey,
+  Connection,
+  LAMPORTS_PER_SOL,
+} from "@solana/web3.js";
 import {
   touchPlayer,
   getPlayer,
@@ -24,6 +29,18 @@ import {
 } from "./store";
 
 const CAPTCHA_MS = 3 * 60 * 1000;
+
+/** Commands allowed to reply in groups */
+const GROUP_OK = new Set([
+  "tip",
+  "rain",
+  "leaderboard",
+  "memebattle",
+  "meme",
+  "quiz",
+  "vault",
+  "price",
+]);
 
 function siteUrl() {
   return (
@@ -50,6 +67,15 @@ function ensure(ctx: Context) {
   const id = uid(ctx);
   if (!id || !ctx.from) return null;
   return touchPlayer(id, ctx.from.username, ctx.from.first_name);
+}
+
+function isPrivate(ctx: Context) {
+  return ctx.chat?.type === "private";
+}
+
+function isGroup(ctx: Context) {
+  const t = ctx.chat?.type;
+  return t === "group" || t === "supergroup";
 }
 
 function mention(user: {
@@ -157,12 +183,10 @@ export function createBot() {
 
     const welcome =
       `Welcome ${mention(user)} 👋\n\n` +
-      `*COMMUNITY Coin* — community-owned on Solana.\n` +
-      `No CEO. No private allocation. Holders build the culture.\n\n` +
-      `🔐 *Guardian check*\n` +
-      `Solve this to unlock chat (3 minutes):\n\n` +
+      `*COMMUNITY Coin* — community-owned on Solana.\n\n` +
+      `🔐 *Guardian check* (3 min)\n` +
       `*What is ${a} + ${b}?*\n\n` +
-      `Tap the correct answer. Wrong or timeout = removed.`;
+      `Tap the answer. Wrong or timeout = removed.`;
 
     let messageId: number | undefined;
     try {
@@ -185,6 +209,16 @@ export function createBot() {
       endsAt: Date.now() + CAPTCHA_MS,
     });
   }
+
+  // Activity only — never reply to normal group messages
+  bot.on("message", async (ctx, next) => {
+    const id = uid(ctx);
+    if (id && ctx.chat) {
+      ensure(ctx);
+      markActive(String(ctx.chat.id), id);
+    }
+    await next();
+  });
 
   bot.on("message:new_chat_members", async (ctx) => {
     const chatId = ctx.chat?.id;
@@ -218,7 +252,7 @@ export function createBot() {
 
     if (!ctx.from || ctx.from.id !== userId) {
       return ctx.answerCallbackQuery({
-        text: "This check is not for you.",
+        text: "Not your check.",
         show_alert: true,
       });
     }
@@ -235,17 +269,17 @@ export function createBot() {
 
     if (picked !== challenge.answer) {
       clearCaptcha(chatId, userId);
-      await ctx.answerCallbackQuery({ text: "Wrong answer.", show_alert: true });
+      await ctx.answerCallbackQuery({ text: "Wrong.", show_alert: true });
       await kickMember(chatId, userId);
       try {
-        await ctx.editMessageText("Verification failed. Removed from the group.");
+        await ctx.editMessageText("Verification failed — removed.");
       } catch {}
       return;
     }
 
     clearCaptcha(chatId, userId);
     await unrestrictMember(chatId, userId);
-    await ctx.answerCallbackQuery({ text: "Verified. Welcome in." });
+    await ctx.answerCallbackQuery({ text: "Verified ✓" });
     const p = touchPlayer(
       String(userId),
       ctx.from.username,
@@ -254,43 +288,118 @@ export function createBot() {
     addPoints(p.id, 10);
     try {
       await ctx.editMessageText(
-        `✅ ${mention(ctx.from)} verified.\n\nWelcome to *COMMUNITY Coin*.\n+10 points. Try /daily · /tip · /vault`,
+        `✅ ${mention(ctx.from)} verified. Welcome. +10 pts.`,
         { parse_mode: "Markdown" }
       );
     } catch {}
   });
 
-  bot.on("message", async (ctx, next) => {
-    const id = uid(ctx);
-    if (id && ctx.chat) {
-      ensure(ctx);
-      markActive(String(ctx.chat.id), id);
-    }
-    await next();
-  });
-
+  // /start — full menu only in private; silence in groups
   bot.command("start", async (ctx) => {
+    if (isGroup(ctx)) {
+      // Ignore long welcome spam in groups
+      return;
+    }
     const p = ensure(ctx);
+    const keyboard = new InlineKeyboard()
+      .url("Website", site)
+      .url("Chat", process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/communitycoinchatt")
+      .row()
+      .text("Daily", "menu:daily")
+      .text("Balance", "menu:balance")
+      .row()
+      .text("Leaderboard", "menu:leaderboard")
+      .text("Help", "menu:help")
+      .row()
+      .text("Create wallet", "wallet:create")
+      .text("Wallet status", "wallet:status");
+
     await ctx.reply(
-      `Welcome to COMMUNITY Coin.\n\nCommunity-owned. No CEO. Built by holders.\n\n` +
-        `${p ? `You have *${p.points} points*.` : ""}\n\n` +
-        `/help · /daily · /tip · /rain · /leaderboard · /vault · /wallet · /memebattle\n\n` +
-        `Points are for activity only — not real tokens.`,
-      { parse_mode: "Markdown" }
+      `Welcome to COMMUNITY Coin.\n\n` +
+        `${p ? `Points: *${p.points}*` : ""}\n\n` +
+        `Use buttons below. Points ≠ tokens.\n` +
+        `Wallet: /wallet create or /wallet import`,
+      { parse_mode: "Markdown", reply_markup: keyboard }
     );
   });
 
+  // Menu buttons — alert in groups, message only in private
+  bot.callbackQuery(/^menu:(daily|balance|leaderboard|help)$/, async (ctx) => {
+    const action = ctx.match![1];
+    const p = ensure(ctx);
+    const privateChat = isPrivate(ctx);
+
+    if (action === "daily") {
+      if (!p) return ctx.answerCallbackQuery();
+      const result = claimDaily(p.id);
+      await ctx.answerCallbackQuery({
+        text: result.ok ? `+${result.amount} pts · bal ${result.points}` : result.error,
+        show_alert: true,
+      });
+      if (result.ok && privateChat) {
+        await ctx.reply(`Daily: *+${result.amount}* · Balance: *${result.points}*`, {
+          parse_mode: "Markdown",
+        });
+      }
+      return;
+    }
+
+    if (action === "balance") {
+      if (!p) return ctx.answerCallbackQuery();
+      await ctx.answerCallbackQuery({
+        text: `${p.points} points`,
+        show_alert: true,
+      });
+      if (privateChat) {
+        await ctx.reply(
+          `${display(p)}\nPoints: *${p.points}*\nTips: ${p.tipsSent} sent / ${p.tipsReceived} recv` +
+            (p.walletAddress ? `\nWallet: \`${p.walletAddress}\`` : ""),
+          { parse_mode: "Markdown" }
+        );
+      }
+      return;
+    }
+
+    if (action === "leaderboard") {
+      const top = leaderboard(10);
+      if (!top.length) {
+        return ctx.answerCallbackQuery({ text: "No players yet", show_alert: true });
+      }
+      const lines = top.map((player, i) => `${i + 1}. ${display(player)} — ${player.points}`);
+      // Leaderboard is fine in groups, but keep it short via alert if group + long; allow group message once
+      await ctx.answerCallbackQuery();
+      if (privateChat || isGroup(ctx)) {
+        await ctx.reply(`*Leaderboard*\n\n${lines.join("\n")}`, {
+          parse_mode: "Markdown",
+        });
+      }
+      return;
+    }
+
+    if (action === "help") {
+      await ctx.answerCallbackQuery({
+        text: "DM the bot for full help: /help",
+        show_alert: true,
+      });
+      if (privateChat) {
+        await ctx.reply(
+          `*Commands*\n/daily /tip /rain /balance /leaderboard\n/quiz /memebattle /vault\n/wallet create · import · clear\n\nNever paste seed phrases.`,
+          { parse_mode: "Markdown" }
+        );
+      }
+    }
+  });
+
   bot.command("help", async (ctx) => {
+    if (isGroup(ctx)) return; // ignore in groups
     await ctx.reply(
-      `*COMMUNITY Coin bot*\n\n` +
+      `*COMMUNITY Coin*\n\n` +
         `/daily /tip /rain /balance /leaderboard\n` +
         `/quiz /memebattle /meme\n` +
-        `/vault /price /wallet /treasury\n\n` +
-        `*Wallet*\n` +
-        `/wallet create — new Solana wallet (DM only)\n` +
-        `/wallet import <address> — public address only\n` +
-        `/wallet clear — unlink\n\n` +
-        `Never paste seed phrases. Points ≠ tokens.`,
+        `/vault /price\n\n` +
+        `*Wallet (DM only)*\n` +
+        `/wallet create\n/wallet import <address>\n/wallet clear\n\n` +
+        `Group: tip · rain · leaderboard · quiz · memes · vault only.`,
       { parse_mode: "Markdown" }
     );
   });
@@ -298,6 +407,12 @@ export function createBot() {
   bot.command("balance", async (ctx) => {
     const p = ensure(ctx);
     if (!p) return;
+    if (isGroup(ctx)) {
+      // Short reply only — or silent; use brief
+      return ctx.reply(`${display(p)}: *${p.points}* pts`, {
+        parse_mode: "Markdown",
+      });
+    }
     await ctx.reply(
       `${display(p)}\nPoints: *${p.points}*\nTips sent: ${p.tipsSent} · received: ${p.tipsReceived}` +
         (p.walletAddress ? `\nWallet: \`${p.walletAddress}\`` : ""),
@@ -309,11 +424,13 @@ export function createBot() {
     const p = ensure(ctx);
     if (!p) return;
     const result = claimDaily(p.id);
-    if (!result.ok) return ctx.reply(result.error);
-    await ctx.reply(
-      `Daily claimed: *+${result.amount}*\nBalance: *${result.points}*`,
-      { parse_mode: "Markdown" }
-    );
+    if (!result.ok) {
+      if (isGroup(ctx)) return; // don't spam errors in group
+      return ctx.reply(result.error);
+    }
+    await ctx.reply(`Daily *+${result.amount}* · *${result.points}* pts`, {
+      parse_mode: "Markdown",
+    });
   });
 
   bot.command("tip", async (ctx) => {
@@ -336,20 +453,26 @@ export function createBot() {
 
     const amount = Number(amountStr);
     if (!amountStr || !Number.isFinite(amount) || amount <= 0) {
-      return ctx.reply("Usage: `/tip @username 50` or reply `/tip 50`", {
+      if (isGroup(ctx)) return;
+      return ctx.reply("Usage: `/tip @user 50` or reply `/tip 50`", {
         parse_mode: "Markdown",
       });
     }
 
     let to = targetId ? getPlayer(targetId) : undefined;
     if (!to && targetUsername) to = findByUsername(targetUsername);
-    if (!to)
-      return ctx.reply("User not found. They need to /start first.");
+    if (!to) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("User not found — they need /start in DM first.");
+    }
 
     const result = transferPoints(p.id, to.id, Math.floor(amount));
-    if (!result.ok) return ctx.reply(result.error);
+    if (!result.ok) {
+      if (isGroup(ctx)) return;
+      return ctx.reply(result.error);
+    }
     await ctx.reply(
-      `${display(p)} tipped *${Math.floor(amount)}* to ${display(to)}.\nYour balance: *${getPlayer(p.id)?.points}*`,
+      `${display(p)} → ${display(to)}: *${Math.floor(amount)}* pts`,
       { parse_mode: "Markdown" }
     );
   });
@@ -358,20 +481,25 @@ export function createBot() {
     const p = ensure(ctx);
     if (!p || !ctx.chat) return;
     const amount = Math.floor(Number((ctx.message?.text || "").split(/\s+/)[1]));
-    if (!Number.isFinite(amount) || amount < 10)
-      return ctx.reply("Usage: `/rain 100` (min 10)", { parse_mode: "Markdown" });
-    if (p.points < amount)
-      return ctx.reply(`Not enough points. You have ${p.points}.`);
+    if (!Number.isFinite(amount) || amount < 10) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("Usage: `/rain 100`", { parse_mode: "Markdown" });
+    }
+    if (p.points < amount) {
+      if (isGroup(ctx)) return;
+      return ctx.reply(`Not enough points (${p.points}).`);
+    }
 
     const recipients = getActive(String(ctx.chat.id), p.id).slice(0, 10);
-    if (!recipients.length)
-      return ctx.reply("No recent active users to rain on.");
+    if (!recipients.length) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("No recent active users.");
+    }
 
     const each = Math.floor(amount / recipients.length);
-    if (each < 1) return ctx.reply("Amount too small to split.");
+    if (each < 1) return;
     const total = each * recipients.length;
     addPoints(p.id, -total);
-
     const names: string[] = [];
     for (const rid of recipients) {
       addPoints(rid, each);
@@ -379,7 +507,7 @@ export function createBot() {
       if (rp) names.push(display(rp));
     }
     await ctx.reply(
-      `Rain: *${each}* × ${recipients.length} (*${total}*)\n${names.join(", ")}`,
+      `Rain *${each}* × ${recipients.length} = *${total}*\n${names.join(", ")}`,
       { parse_mode: "Markdown" }
     );
   });
@@ -387,7 +515,10 @@ export function createBot() {
   bot.command("leaderboard", async (ctx) => {
     ensure(ctx);
     const top = leaderboard(10);
-    if (!top.length) return ctx.reply("No players yet — /start");
+    if (!top.length) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("No players yet.");
+    }
     const lines = top.map((p, i) => `${i + 1}. ${display(p)} — *${p.points}*`);
     await ctx.reply(`*Leaderboard*\n\n${lines.join("\n")}`, {
       parse_mode: "Markdown",
@@ -395,18 +526,34 @@ export function createBot() {
   });
 
   const QUIZZES = [
-    { q: "What chain is COMMUNITY Coin on?", options: ["Ethereum", "Solana", "Bitcoin"], answer: 1 },
-    { q: "Who controls the culture?", options: ["A CEO", "The community", "A private fund"], answer: 1 },
-    { q: "Vault deposits generate yield?", options: ["Yes", "No — voluntary only", "Sometimes"], answer: 1 },
-    { q: "Shared vision target?", options: ["$1M MC", "$1B MC", "$10B MC"], answer: 1 },
+    {
+      q: "What chain is COMMUNITY Coin on?",
+      options: ["Ethereum", "Solana", "Bitcoin"],
+      answer: 1,
+    },
+    {
+      q: "Who controls the culture?",
+      options: ["A CEO", "The community", "A private fund"],
+      answer: 1,
+    },
+    {
+      q: "Vault deposits generate yield?",
+      options: ["Yes", "No — voluntary only", "Sometimes"],
+      answer: 1,
+    },
   ];
 
   bot.command("quiz", async (ctx) => {
     ensure(ctx);
     const item = QUIZZES[Math.floor(Math.random() * QUIZZES.length)];
     const kb = new InlineKeyboard();
-    item.options.forEach((opt, i) => kb.text(opt, `quiz:${i}:${item.answer}`).row());
-    await ctx.reply(`*Quiz*\n${item.q}`, { parse_mode: "Markdown", reply_markup: kb });
+    item.options.forEach((opt, i) =>
+      kb.text(opt, `quiz:${i}:${item.answer}`).row()
+    );
+    await ctx.reply(`*Quiz*\n${item.q}`, {
+      parse_mode: "Markdown",
+      reply_markup: kb,
+    });
   });
 
   bot.callbackQuery(/^quiz:(\d+):(\d+)$/, async (ctx) => {
@@ -418,26 +565,28 @@ export function createBot() {
       addPoints(p.id, 15);
       const updated = getPlayer(p.id)!;
       updated.quizCorrect += 1;
-      await ctx.answerCallbackQuery({ text: "Correct! +15" });
-      await ctx.editMessageText(`Correct. +15\nBalance: *${updated.points}*`, {
-        parse_mode: "Markdown",
-      });
+      await ctx.answerCallbackQuery({ text: `Correct! +15 → ${updated.points}` });
+      try {
+        await ctx.editMessageText(`✓ Correct. +15 pts (bal ${updated.points})`);
+      } catch {}
     } else {
       await ctx.answerCallbackQuery({ text: "Wrong" });
-      await ctx.editMessageText("Wrong. Try /quiz again.");
+      try {
+        await ctx.editMessageText("Wrong. /quiz for another.");
+      } catch {}
     }
   });
 
   bot.command("memebattle", async (ctx) => {
     ensure(ctx);
     if (!ctx.chat) return;
-    if (getActiveBattle(String(ctx.chat.id)))
-      return ctx.reply("Battle already running. `/meme your text`", {
-        parse_mode: "Markdown",
-      });
+    if (getActiveBattle(String(ctx.chat.id))) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("Battle already running.");
+    }
     startBattle(String(ctx.chat.id));
     await ctx.reply(
-      `*Meme battle* (5 min)\nSubmit: `/meme your text`\nWinner +50 points.`,
+      `*Meme battle* (5 min)\n\`/meme your text\` · winner +50`,
       { parse_mode: "Markdown" }
     );
   });
@@ -446,23 +595,27 @@ export function createBot() {
     const p = ensure(ctx);
     if (!p || !ctx.chat) return;
     const battle = getActiveBattle(String(ctx.chat.id));
-    if (!battle) return ctx.reply("No active battle. /memebattle");
+    if (!battle) {
+      if (isGroup(ctx)) return;
+      return ctx.reply("No active battle. /memebattle");
+    }
     if (battle.endsAt <= Date.now()) {
       const closed = closeBattle(battle.id);
       if (closed?.entries.length) {
         const w = closed.entries[0];
         const wp = getPlayer(w.userId);
-        await ctx.reply(
-          `Battle ended. Winner: ${wp ? display(wp) : w.userId} (+50)`
-        );
+        await ctx.reply(`Battle ended. Winner: ${wp ? display(wp) : w.userId}`);
       }
       return;
     }
-    const text = (ctx.message?.text || "")
+    const textMsg = (ctx.message?.text || "")
       .replace(/^\/meme(@\w+)?\s*/i, "")
       .trim();
-    const result = addMemeEntry(battle.id, p.id, text);
-    if (!result.ok) return ctx.reply(result.error);
+    const result = addMemeEntry(battle.id, p.id, textMsg);
+    if (!result.ok) {
+      if (isGroup(ctx)) return;
+      return ctx.reply(result.error);
+    }
     const kb = new InlineKeyboard();
     battle.entries.forEach((e, i) => {
       const author = getPlayer(e.userId);
@@ -480,16 +633,15 @@ export function createBot() {
     const p = ensure(ctx);
     if (!p) return ctx.answerCallbackQuery();
     const result = voteMeme(ctx.match![1], Number(ctx.match![2]), p.id);
-    if (!result.ok) return ctx.answerCallbackQuery({ text: result.error });
-    await ctx.answerCallbackQuery({ text: "Vote recorded" });
+    // Silent toast only — no group spam
+    await ctx.answerCallbackQuery({
+      text: result.ok ? "Vote recorded" : result.error,
+    });
   });
 
   bot.command("vault", async (ctx) => {
     await ctx.reply(
-      `*Community vault*\n\n\`${TREASURY}\`\n\n` +
-        `Funds for *marketing* and *airdrops*.\n` +
-        `Voluntary. No yield.\n\n` +
-        `https://explorer.solana.com/address/${TREASURY}`,
+      `*Vault* (marketing & airdrops)\n\`${TREASURY}\`\nhttps://explorer.solana.com/address/${TREASURY}`,
       { parse_mode: "Markdown" }
     );
   });
@@ -506,15 +658,16 @@ export function createBot() {
         supply?: { uiAmount?: string };
         message?: string;
       };
-      if (!response.ok || !data.configured || !data.supply)
-        return ctx.reply(
-          "Token data unavailable. " + (data.message || "Mint not configured.")
-        );
+      if (!response.ok || !data.configured || !data.supply) {
+        if (isGroup(ctx)) return;
+        return ctx.reply("Token data unavailable.");
+      }
       return ctx.reply(
-        `*On-chain*\nMint: \`${data.mint}\`\nSupply: ${data.supply.uiAmount}`,
+        `Mint: \`${data.mint}\`\nSupply: ${data.supply.uiAmount}`,
         { parse_mode: "Markdown" }
       );
     } catch {
+      if (isGroup(ctx)) return;
       return ctx.reply("Could not reach token data.");
     }
   });
@@ -529,10 +682,6 @@ export function createBot() {
     } catch {
       return null;
     }
-  }
-
-  function isPrivateChat(ctx: Context) {
-    return ctx.chat?.type === "private";
   }
 
   function looksLikeSeedOrSecret(input: string): boolean {
@@ -552,7 +701,12 @@ export function createBot() {
     }
   }
 
+  // Wallet — private only
   bot.command("wallet", async (ctx) => {
+    if (isGroup(ctx)) {
+      // Ignore full wallet flow in groups
+      return;
+    }
     const p = ensure(ctx);
     if (!p) return;
 
@@ -561,15 +715,9 @@ export function createBot() {
     const arg = parts.slice(2).join(" ").trim();
 
     if (sub === "create") {
-      if (!isPrivateChat(ctx)) {
-        return ctx.reply(
-          "For safety, run `/wallet create` in a *private chat* with the bot.",
-          { parse_mode: "Markdown" }
-        );
-      }
       if (p.walletAddress) {
         return ctx.reply(
-          `You already have a wallet linked:\n\`${p.walletAddress}\`\n\nSource: *${p.walletSource || "?"}*.\nUse /wallet to view. `/wallet clear` first to replace.`,
+          `Already linked:\n\`${p.walletAddress}\`\n/wallet clear to replace.`,
           { parse_mode: "Markdown" }
         );
       }
@@ -578,119 +726,93 @@ export function createBot() {
       const secret = Buffer.from(kp.secretKey).toString("base64");
       setCreatedWallet(p.id, address, secret);
       await ctx.reply(
-        `*Wallet created*\n\nAddress:\n\`${address}\`\n\n` +
-          `*Backup (save offline now):*\n\`${secret}\`\n\n` +
-          `This is your secret key (base64). Anyone with it controls the funds.\n` +
-          `• Save it offline\n• Never share it in groups\n• Fund by sending SOL to the address\n\n` +
-          `On-chain funds stay yours — this links the address to your Telegram profile.`,
+        `*Wallet created*\n\n\`${address}\`\n\n*Backup (save offline):*\n\`${secret}\`\n\nFund with SOL. Never share the secret.`,
         { parse_mode: "Markdown" }
       );
       return;
     }
 
     if (sub === "import") {
-      if (!isPrivateChat(ctx)) {
-        return ctx.reply("Run `/wallet import <address>` in a *private chat*.", {
-          parse_mode: "Markdown",
-        });
-      }
       if (!arg) {
         return ctx.reply(
-          "Usage: `/wallet import YOUR_SOLANA_ADDRESS`\n\n*Public address only.* Never paste a seed phrase or private key.",
+          "`/wallet import PUBLIC_ADDRESS`\nNever paste seed phrases.",
           { parse_mode: "Markdown" }
         );
       }
       if (looksLikeSeedOrSecret(arg)) {
-        return ctx.reply(
-          "Refused.\n\nDo *not* paste seed phrases or private keys into any bot.\nImport only your *public* Solana address.",
-          { parse_mode: "Markdown" }
-        );
+        return ctx.reply("Refused — public address only. Never paste seeds/keys.");
       }
       if (!isValidSolAddress(arg)) {
-        return ctx.reply(
-          "That does not look like a valid Solana address. Check and try again."
-        );
+        return ctx.reply("Invalid Solana address.");
       }
       const address = new PublicKey(arg.trim()).toBase58();
       setImportedWallet(p.id, address);
       const bal = await solBalance(address);
       await ctx.reply(
-        `*Wallet imported* (public address)\n\n\`${address}\`\n\n` +
-          (bal != null ? `On-chain SOL: *${bal}*\n\n` : "") +
-          `Imported wallets are address-only — the bot cannot spend from them.`,
+        `Imported:\n\`${address}\`` +
+          (bal != null ? `\nSOL: *${bal}*` : ""),
         { parse_mode: "Markdown" }
       );
       return;
     }
 
     if (sub === "clear") {
-      if (!isPrivateChat(ctx)) {
-        return ctx.reply("Run `/wallet clear` in private chat.");
-      }
       if (!p.walletAddress) return ctx.reply("No wallet linked.");
       clearWallet(p.id);
-      return ctx.reply(
-        "Wallet unlinked from your bot profile. On-chain funds are unchanged."
-      );
+      return ctx.reply("Unlinked. On-chain funds unchanged.");
     }
-
-    const kb = new InlineKeyboard()
-      .text("Create wallet", "wallet:create")
-      .text("Import help", "wallet:import_help")
-      .row()
-      .url(
-        "Explorer",
-        p.walletAddress
-          ? `https://explorer.solana.com/address/${p.walletAddress}`
-          : site
-      )
-      .url("Site", site + "/link-wallet");
 
     if (!p.walletAddress) {
-      await ctx.reply(
-        `*Wallet*\n\nNo wallet linked yet.\n\n` +
-          `• `/wallet create` — generate a Solana wallet (private chat)\n` +
-          `• `/wallet import <address>` — link your public address\n\n` +
-          `*Never* paste a seed phrase or private key.\n` +
-          `Fund a created wallet by sending SOL to its address.`,
-        { parse_mode: "Markdown", reply_markup: kb }
+      return ctx.reply(
+        `No wallet yet.\n\`/wallet create\` or \`/wallet import <address>\``,
+        { parse_mode: "Markdown" }
       );
-      return;
     }
-
     const bal = await solBalance(p.walletAddress);
     await ctx.reply(
-      `*Your wallet*\n\nAddress:\n\`${p.walletAddress}\`\nSource: *${p.walletSource || "unknown"}*\n` +
-        (bal != null
-          ? `SOL balance: *${bal}*\n`
-          : `SOL balance: set SOLANA_RPC_URL for live balance\n`) +
-        `\nFund: send SOL to the address above.\n`/wallet clear` — unlink.`,
-      { parse_mode: "Markdown", reply_markup: kb }
+      `*Wallet*\n\`${p.walletAddress}\`\nSource: ${p.walletSource}` +
+        (bal != null ? `\nSOL: *${bal}*` : ""),
+      { parse_mode: "Markdown" }
     );
   });
 
+  // Wallet buttons — alerts only, never group spam
   bot.callbackQuery("wallet:create", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await ctx.reply(
-      "Send `/wallet create` in a *private* chat with the bot.",
-      { parse_mode: "Markdown" }
-    );
+    await ctx.answerCallbackQuery({
+      text: "Open a private chat with the bot → /wallet create",
+      show_alert: true,
+    });
+  });
+
+  bot.callbackQuery("wallet:status", async (ctx) => {
+    const p = ensure(ctx);
+    if (!p?.walletAddress) {
+      return ctx.answerCallbackQuery({
+        text: "No wallet. DM bot: /wallet create",
+        show_alert: true,
+      });
+    }
+    await ctx.answerCallbackQuery({
+      text: p.walletAddress.slice(0, 8) + "…" + p.walletAddress.slice(-6),
+      show_alert: true,
+    });
   });
 
   bot.callbackQuery("wallet:import_help", async (ctx) => {
-    await ctx.answerCallbackQuery();
-    await ctx.reply(
-      "Import = *public address only*.\n\n`/wallet import YourSolanaAddress`\n\nNever paste seed phrases.",
-      { parse_mode: "Markdown" }
-    );
+    await ctx.answerCallbackQuery({
+      text: "DM: /wallet import YOUR_ADDRESS",
+      show_alert: true,
+    });
   });
 
   bot.command("treasury", async (ctx) => {
-    await ctx.reply(`Treasury: ${site}/treasury`);
+    if (isGroup(ctx)) return;
+    await ctx.reply(`${site}/treasury`);
   });
 
   bot.command("governance", async (ctx) => {
-    await ctx.reply(`Governance: ${site}/governance`);
+    if (isGroup(ctx)) return;
+    await ctx.reply(`${site}/governance`);
   });
 
   bot.catch((err) => console.error("Telegram bot error:", err));
