@@ -1,37 +1,41 @@
 # COMMUNITY Coin Telegram bot
 
-## Required env
+## Vercel (recommended for this project)
 
+1. Vercel project → **Settings → Environment Variables**
+
+| Name | Value |
+|------|--------|
+| `TELEGRAM_BOT_TOKEN` | from @BotFather |
+| `NEXT_PUBLIC_SITE_URL` | `https://community-coinm.vercel.app` |
+| `NEXT_PUBLIC_TREASURY_ADDRESS` | `21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP` |
+
+2. Redeploy the site.
+
+3. **Set the webhook** (run once in terminal):
+
+```bash
+curl "https://api.telegram.org/bot<YOUR_TOKEN>/setWebhook?url=https://community-coinm.vercel.app/api/telegram&allowed_updates=%5B%22message%22%2C%22callback_query%22%2C%22chat_member%22%2C%22my_chat_member%22%5D"
 ```
-TELEGRAM_BOT_TOKEN=from_BotFather
-NEXT_PUBLIC_SITE_URL=https://community-coinm.vercel.app
-NEXT_PUBLIC_TREASURY_ADDRESS=21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP
+
+4. Check:
+
+```bash
+curl https://community-coinm.vercel.app/api/telegram
+curl "https://api.telegram.org/bot<YOUR_TOKEN>/getWebhookInfo"
 ```
 
-Optional: `BOT_DATA_DIR` for persistent points storage path.
+5. Add bot to the group as **admin** (restrict + ban members).
 
-## Local
+## Local polling (optional)
 
 ```bash
 npm install
 TELEGRAM_BOT_TOKEN=xxx npm run bot
 ```
 
-## Railway (recommended)
+Do not run polling and webhook at the same time.
 
-1. [railway.app](https://railway.app) → New Project → Deploy from GitHub → `spanda6z/Community-Coinm`
-2. Variables → add `TELEGRAM_BOT_TOKEN` (and site/treasury URLs)
-3. Settings → Start command: `npm run bot`
-4. Deploy
+## Note on points storage
 
-## Group setup
-
-1. Add bot to https://t.me/communitycoinchatt
-2. Promote to **admin** with: Restrict members, Ban users
-3. BotFather → Bot Settings → Group Privacy → **Turn off** (for /rain activity)
-
-## Commands
-
-`/start` `/help` `/daily` `/tip` `/rain` `/balance` `/leaderboard` `/quiz` `/memebattle` `/meme` `/vault` `/price` `/wallet` `/treasury`
-
-New members: maths captcha within 3 minutes or kicked.
+On Vercel, points live in memory/`/tmp` and may reset on cold starts. Fine for launch; add Postgres later for permanence.
