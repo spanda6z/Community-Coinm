@@ -429,7 +429,7 @@ export function createBot() {
       });
     startBattle(String(ctx.chat.id));
     await ctx.reply(
-      `*Meme battle* (5 min)\nSubmit: `/meme your text`\nWinner +50 points.`,
+      "*Meme battle* (5 min)\nSubmit: /meme your text\nWinner +50 points.",
       { parse_mode: "Markdown" }
     );
   });
