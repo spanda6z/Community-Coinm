@@ -64,6 +64,18 @@ img { max-width: 100%; display: block; }
   transition: background .2s, color .2s;
 }
 .nav-cta:hover { background: var(--fg); color: var(--bg); }
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.nav-social {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.nav-social:hover { color: var(--fg); }
 
 .hero {
   padding: 80px 0 60px;
@@ -510,7 +522,6 @@ img { max-width: 100%; display: block; }
   border-radius: 999px;
 }
 
-/* VAULT SPENDS LOG */
 .spends-list { border-top: 1px solid var(--line); }
 .spend-row {
   padding: 24px 0;
