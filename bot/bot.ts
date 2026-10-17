@@ -74,7 +74,6 @@ export function createBot() {
   async function restrictNewMember(chatId: number, userId: number) {
     try {
       await bot.api.restrictChatMember(chatId, userId, {
-        permissions: {
           can_send_messages: false,
           can_send_audios: false,
           can_send_documents: false,
@@ -89,7 +88,6 @@ export function createBot() {
           can_invite_users: false,
           can_pin_messages: false,
           can_manage_topics: false,
-        },
       });
     } catch (e) {
       console.error("restrict failed", e);
@@ -99,7 +97,6 @@ export function createBot() {
   async function unrestrictMember(chatId: number, userId: number) {
     try {
       await bot.api.restrictChatMember(chatId, userId, {
-        permissions: {
           can_send_messages: true,
           can_send_audios: true,
           can_send_documents: true,
@@ -114,7 +111,6 @@ export function createBot() {
           can_invite_users: true,
           can_pin_messages: false,
           can_manage_topics: false,
-        },
       });
     } catch (e) {
       console.error("unrestrict failed", e);
