@@ -48,7 +48,7 @@ export default function Dashboard() {
     {loading ? <div className="data-panel">Loading verified on-chain data…</div> : data?.supply ? <>
       <div className="dashboard-cards">
         <article className="data-panel"><span>Total token supply</span><strong>{formatTokenAmount(data.supply.amount, data.supply.decimals)}</strong><small>Token decimals: {data.supply.decimals}</small></article>
-        <article className="data-panel"><span>Token mint</span><strong className="mint-address">{short(data.mint ?? "")}</strong><small>{data.mint}</small></article>
+        <article className="data-panel"><span>Token mint</span><strong className="mint-address">{short(data.mint ?? "")}</strong><small><a href={`https://explorer.solana.com/address/${data.mint}`} target="_blank" rel="noreferrer">View mint in Solana Explorer ↗</a></small></article>
         <article className="data-panel"><span>Data source</span><strong>{data.source}</strong><small>Commitment: confirmed</small></article>
       </div>
       <section className="holders-panel"><div className="holders-title"><h2>Largest token accounts</h2><span>{data.largestAccounts?.length ?? 0} accounts</span></div><p className="dashboard-muted">Largest accounts are not the same as unique holders. Exchange wallets and token authorities may hold balances for many people.</p><div className="account-list">{(data.largestAccounts ?? []).map((a,i)=><div className="account-row" key={a.address}><span className="account-rank">{String(i+1).padStart(2,"0")}</span><code>{a.address}</code><strong>{formatTokenAmount(a.amount, a.decimals)}</strong><a href={`https://explorer.solana.com/address/${a.address}`} target="_blank" rel="noreferrer" aria-label="View account in Solana Explorer">↗</a></div>)}</div></section>
