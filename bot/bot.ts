@@ -1,4 +1,5 @@
 import { Bot, InlineKeyboard, Context, webhookCallback } from "grammy";
+import { Keypair, PublicKey, Connection, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import {
   touchPlayer,
   getPlayer,
@@ -17,6 +18,9 @@ import {
   setCaptcha,
   getCaptcha,
   clearCaptcha,
+  setCreatedWallet,
+  setImportedWallet,
+  clearWallet,
 } from "./store";
 
 const CAPTCHA_MS = 3 * 60 * 1000;
@@ -74,6 +78,7 @@ export function createBot() {
   async function restrictNewMember(chatId: number, userId: number) {
     try {
       await bot.api.restrictChatMember(chatId, userId, {
+        permissions: {
           can_send_messages: false,
           can_send_audios: false,
           can_send_documents: false,
@@ -88,6 +93,7 @@ export function createBot() {
           can_invite_users: false,
           can_pin_messages: false,
           can_manage_topics: false,
+        },
       });
     } catch (e) {
       console.error("restrict failed", e);
@@ -97,6 +103,7 @@ export function createBot() {
   async function unrestrictMember(chatId: number, userId: number) {
     try {
       await bot.api.restrictChatMember(chatId, userId, {
+        permissions: {
           can_send_messages: true,
           can_send_audios: true,
           can_send_documents: true,
@@ -111,6 +118,7 @@ export function createBot() {
           can_invite_users: true,
           can_pin_messages: false,
           can_manage_topics: false,
+        },
       });
     } catch (e) {
       console.error("unrestrict failed", e);
@@ -263,61 +271,11 @@ export function createBot() {
 
   bot.command("start", async (ctx) => {
     const p = ensure(ctx);
-    const keyboard = new InlineKeyboard()
-      .url("🌐 Website", site)
-      .url("📊 Dashboard", site + "/dashboard")
-      .row()
-      .url("🗳 Governance", site + "/governance")
-      .url("🏦 Treasury", site + "/treasury")
-      .row()
-      .url("🔗 Link Wallet", site + "/link-wallet")
-      .url("💬 Community Chat", process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/communitycoinchatt")
-      .row()
-      .text("🎁 Daily Points", "menu:daily")
-      .text("👤 My Points", "menu:balance")
-      .row()
-      .text("🏆 Leaderboard", "menu:leaderboard")
-      .text("❓ Help", "menu:help");
-
     await ctx.reply(
-      `Welcome to COMMUNITY Coin! 👋\n\nCommunity-owned. No CEO. Built by holders.\n\n` +
+      `Welcome to COMMUNITY Coin.\n\nCommunity-owned. No CEO. Built by holders.\n\n` +
         `${p ? `You have *${p.points} points*.` : ""}\n\n` +
-        `Use the buttons below to explore the project and access your community points.\n\n` +
+        `/help · /daily · /tip · /rain · /leaderboard · /vault · /wallet · /memebattle\n\n` +
         `Points are for activity only — not real tokens.`,
-      { parse_mode: "Markdown", reply_markup: keyboard }
-    );
-  });
-
-  bot.callbackQuery(/^menu:(daily|balance|leaderboard|help)$/, async (ctx) => {
-    const action = ctx.match![1];
-    const p = ensure(ctx);
-    if (action === "daily") {
-      if (!p) return ctx.answerCallbackQuery();
-      const result = claimDaily(p.id);
-      await ctx.answerCallbackQuery({ text: result.ok ? `Claimed +${result.amount} points!` : result.error, show_alert: true });
-      if (result.ok) {
-        await ctx.reply(`🎁 Daily claimed: *+${result.amount}* points\nBalance: *${result.points}*`, { parse_mode: "Markdown" });
-      }
-      return;
-    }
-    if (action === "balance") {
-      if (!p) return ctx.answerCallbackQuery();
-      await ctx.answerCallbackQuery();
-      await ctx.reply(`${display(p)}\nPoints: *${p.points}*\nTips sent: ${p.tipsSent} · received: ${p.tipsReceived}`, { parse_mode: "Markdown" });
-      return;
-    }
-    if (action === "leaderboard") {
-      await ctx.answerCallbackQuery();
-      const top = leaderboard(10);
-      if (!top.length) return ctx.reply("No players yet — tap Start to begin.");
-      const lines = top.map((player, i) => `${i + 1}. ${display(player)} — *${player.points}*`);
-      await ctx.reply(`🏆 *COMMUNITY Coin Leaderboard*\n\n${lines.join("\n")}`, { parse_mode: "Markdown" });
-      return;
-    }
-    await ctx.answerCallbackQuery();
-    await ctx.reply(
-      "*COMMUNITY Coin Bot Help*\n\n" +
-        "/daily — claim daily points\n/balance — check your points\n/tip @username 50 — tip points\n/rain 100 — share points with active members\n/leaderboard — top members\n/quiz — play a quiz\n/memebattle — start a meme battle\n/vault — view treasury\n/price — view token data\n/wallet — link your wallet\n\nPoints are for activity only — not real tokens.",
       { parse_mode: "Markdown" }
     );
   });
@@ -328,8 +286,11 @@ export function createBot() {
         `/daily /tip /rain /balance /leaderboard\n` +
         `/quiz /memebattle /meme\n` +
         `/vault /price /wallet /treasury\n\n` +
-        `Guardian: new members solve maths in 3 min or get removed.\n` +
-        `Points ≠ tokens.`,
+        `*Wallet*\n` +
+        `/wallet create — new Solana wallet (DM only)\n` +
+        `/wallet import <address> — public address only\n` +
+        `/wallet clear — unlink\n\n` +
+        `Never paste seed phrases. Points ≠ tokens.`,
       { parse_mode: "Markdown" }
     );
   });
@@ -338,7 +299,8 @@ export function createBot() {
     const p = ensure(ctx);
     if (!p) return;
     await ctx.reply(
-      `${display(p)}\nPoints: *${p.points}*\nTips sent: ${p.tipsSent} · received: ${p.tipsReceived}`,
+      `${display(p)}\nPoints: *${p.points}*\nTips sent: ${p.tipsSent} · received: ${p.tipsReceived}` +
+        (p.walletAddress ? `\nWallet: \`${p.walletAddress}\`` : ""),
       { parse_mode: "Markdown" }
     );
   });
@@ -475,7 +437,7 @@ export function createBot() {
       });
     startBattle(String(ctx.chat.id));
     await ctx.reply(
-      "*Meme battle* (5 min)\nSubmit: /meme your text\nWinner +50 points.",
+      `*Meme battle* (5 min)\nSubmit: `/meme your text`\nWinner +50 points.`,
       { parse_mode: "Markdown" }
     );
   });
@@ -485,7 +447,6 @@ export function createBot() {
     if (!p || !ctx.chat) return;
     const battle = getActiveBattle(String(ctx.chat.id));
     if (!battle) return ctx.reply("No active battle. /memebattle");
-    // auto-close if expired
     if (battle.endsAt <= Date.now()) {
       const closed = closeBattle(battle.id);
       if (closed?.entries.length) {
@@ -558,14 +519,169 @@ export function createBot() {
     }
   });
 
+  async function solBalance(address: string): Promise<string | null> {
+    const rpc = process.env.SOLANA_RPC_URL;
+    if (!rpc) return null;
+    try {
+      const conn = new Connection(rpc, "confirmed");
+      const lamports = await conn.getBalance(new PublicKey(address));
+      return (lamports / LAMPORTS_PER_SOL).toFixed(4);
+    } catch {
+      return null;
+    }
+  }
+
+  function isPrivateChat(ctx: Context) {
+    return ctx.chat?.type === "private";
+  }
+
+  function looksLikeSeedOrSecret(input: string): boolean {
+    const t = input.trim().toLowerCase();
+    if (t.split(/\s+/).length >= 12) return true;
+    if (/^\d+(,\s*\d+){31,}$/.test(t)) return true;
+    if (t.length > 88) return true;
+    return false;
+  }
+
+  function isValidSolAddress(input: string): boolean {
+    try {
+      const pk = new PublicKey(input.trim());
+      return PublicKey.isOnCurve(pk.toBytes());
+    } catch {
+      return false;
+    }
+  }
+
   bot.command("wallet", async (ctx) => {
-    const keyboard = new InlineKeyboard().url(
-      "Open wallet linking",
-      site + "/link-wallet"
-    );
+    const p = ensure(ctx);
+    if (!p) return;
+
+    const parts = (ctx.message?.text || "").trim().split(/\s+/);
+    const sub = (parts[1] || "").toLowerCase();
+    const arg = parts.slice(2).join(" ").trim();
+
+    if (sub === "create") {
+      if (!isPrivateChat(ctx)) {
+        return ctx.reply(
+          "For safety, run `/wallet create` in a *private chat* with the bot.",
+          { parse_mode: "Markdown" }
+        );
+      }
+      if (p.walletAddress) {
+        return ctx.reply(
+          `You already have a wallet linked:\n\`${p.walletAddress}\`\n\nSource: *${p.walletSource || "?"}*.\nUse /wallet to view. `/wallet clear` first to replace.`,
+          { parse_mode: "Markdown" }
+        );
+      }
+      const kp = Keypair.generate();
+      const address = kp.publicKey.toBase58();
+      const secret = Buffer.from(kp.secretKey).toString("base64");
+      setCreatedWallet(p.id, address, secret);
+      await ctx.reply(
+        `*Wallet created*\n\nAddress:\n\`${address}\`\n\n` +
+          `*Backup (save offline now):*\n\`${secret}\`\n\n` +
+          `This is your secret key (base64). Anyone with it controls the funds.\n` +
+          `• Save it offline\n• Never share it in groups\n• Fund by sending SOL to the address\n\n` +
+          `On-chain funds stay yours — this links the address to your Telegram profile.`,
+        { parse_mode: "Markdown" }
+      );
+      return;
+    }
+
+    if (sub === "import") {
+      if (!isPrivateChat(ctx)) {
+        return ctx.reply("Run `/wallet import <address>` in a *private chat*.", {
+          parse_mode: "Markdown",
+        });
+      }
+      if (!arg) {
+        return ctx.reply(
+          "Usage: `/wallet import YOUR_SOLANA_ADDRESS`\n\n*Public address only.* Never paste a seed phrase or private key.",
+          { parse_mode: "Markdown" }
+        );
+      }
+      if (looksLikeSeedOrSecret(arg)) {
+        return ctx.reply(
+          "Refused.\n\nDo *not* paste seed phrases or private keys into any bot.\nImport only your *public* Solana address.",
+          { parse_mode: "Markdown" }
+        );
+      }
+      if (!isValidSolAddress(arg)) {
+        return ctx.reply(
+          "That does not look like a valid Solana address. Check and try again."
+        );
+      }
+      const address = new PublicKey(arg.trim()).toBase58();
+      setImportedWallet(p.id, address);
+      const bal = await solBalance(address);
+      await ctx.reply(
+        `*Wallet imported* (public address)\n\n\`${address}\`\n\n` +
+          (bal != null ? `On-chain SOL: *${bal}*\n\n` : "") +
+          `Imported wallets are address-only — the bot cannot spend from them.`,
+        { parse_mode: "Markdown" }
+      );
+      return;
+    }
+
+    if (sub === "clear") {
+      if (!isPrivateChat(ctx)) {
+        return ctx.reply("Run `/wallet clear` in private chat.");
+      }
+      if (!p.walletAddress) return ctx.reply("No wallet linked.");
+      clearWallet(p.id);
+      return ctx.reply(
+        "Wallet unlinked from your bot profile. On-chain funds are unchanged."
+      );
+    }
+
+    const kb = new InlineKeyboard()
+      .text("Create wallet", "wallet:create")
+      .text("Import help", "wallet:import_help")
+      .row()
+      .url(
+        "Explorer",
+        p.walletAddress
+          ? `https://explorer.solana.com/address/${p.walletAddress}`
+          : site
+      )
+      .url("Site", site + "/link-wallet");
+
+    if (!p.walletAddress) {
+      await ctx.reply(
+        `*Wallet*\n\nNo wallet linked yet.\n\n` +
+          `• `/wallet create` — generate a Solana wallet (private chat)\n` +
+          `• `/wallet import <address>` — link your public address\n\n` +
+          `*Never* paste a seed phrase or private key.\n` +
+          `Fund a created wallet by sending SOL to its address.`,
+        { parse_mode: "Markdown", reply_markup: kb }
+      );
+      return;
+    }
+
+    const bal = await solBalance(p.walletAddress);
     await ctx.reply(
-      "Link wallet by signing a message. Does *not* send funds.",
-      { parse_mode: "Markdown", reply_markup: keyboard }
+      `*Your wallet*\n\nAddress:\n\`${p.walletAddress}\`\nSource: *${p.walletSource || "unknown"}*\n` +
+        (bal != null
+          ? `SOL balance: *${bal}*\n`
+          : `SOL balance: set SOLANA_RPC_URL for live balance\n`) +
+        `\nFund: send SOL to the address above.\n`/wallet clear` — unlink.`,
+      { parse_mode: "Markdown", reply_markup: kb }
+    );
+  });
+
+  bot.callbackQuery("wallet:create", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await ctx.reply(
+      "Send `/wallet create` in a *private* chat with the bot.",
+      { parse_mode: "Markdown" }
+    );
+  });
+
+  bot.callbackQuery("wallet:import_help", async (ctx) => {
+    await ctx.answerCallbackQuery();
+    await ctx.reply(
+      "Import = *public address only*.\n\n`/wallet import YourSolanaAddress`\n\nNever paste seed phrases.",
+      { parse_mode: "Markdown" }
     );
   });
 
