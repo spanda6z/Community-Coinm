@@ -55,11 +55,10 @@ export default function Home() {
       </div>
       <div className="pond-hero-visual">
         <div className="pond-sun"></div><div className="pond-ripple ripple-a"></div><div className="pond-ripple ripple-b"></div>
-        <div className="pond-sticker sticker-hi">OH, HAI! <span>✳</span></div>
-        <FrogMascot className="pond-frog"/>
-        <div className="pond-coin-sticker"><img src={COIN_LOGO_URL} alt="COMMUNITY Coin logo" /></div>
-        <div className="pond-sticker sticker-good">GOOD VIBES ONLY-ish</div>
-        <span className="pond-star star-a">✳</span><span className="pond-star star-b">✳</span>
+        <div className="pond-sticker sticker-hi">THE OFFICIAL COIN <span>✦</span></div>
+        <img className="pond-hero-logo" src={COIN_LOGO_URL} alt="Official COMMUNITY Coin logo" />
+        <div className="pond-sticker sticker-good">COMMUNITY • CULTURE • COIN</div>
+        <span className="pond-star star-a">✦</span><span className="pond-star star-b">✦</span>
       </div>
       <div className="pond-hero-bottom"><span>COMMUNITY FIRST, ALWAYS.</span><span>SCROLL A LITTLE ↓</span></div>
     </section>
@@ -95,6 +94,6 @@ export default function Home() {
 
     <section className="pond-final"><div className="shell pond-final-inner"><div className="pond-final-frog"><FrogMascot className="pond-frog-end"/></div><div><span className="pond-final-kicker">THE POND IS BETTER WITH YOU</span><h2>Come for the memes.<br/><em>Stay for the people.</em></h2><p>Pull up a lily pad. There's room for one more.</p><div className="pond-final-actions"><a className="pond-button pond-button-dark" href={process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/"} target="_blank" rel="noreferrer">Join Telegram ↗</a><a className="pond-button pond-button-outline" href={process.env.NEXT_PUBLIC_X_URL || "https://x.com/"} target="_blank" rel="noreferrer">Follow on X ↗</a></div></div></div></section>
 
-    <footer className="pond-footer shell"><Link className="pond-brand" href="/"><span className="pond-brand-icon">C<span>✳</span></span><span>community<span className="pond-brand-light">coin</span></span></Link><div className="pond-footer-links">{links.map(link=><Link href={link.href} key={link.href}>{link.label}</Link>)}<Link href="/donate">Donate</Link></div><span className="pond-disclaimer">Memes are fun. Crypto is risky. No promises of returns.</span><span className="pond-copyright">© {new Date().getFullYear()} COMMUNITY Coin</span></footer>
+    <footer className="pond-footer shell"><Link className="pond-brand" href="/"><img className="pond-brand-logo" src={COIN_LOGO_URL} alt="COMMUNITY Coin logo" /><span>community<span className="pond-brand-light">coin</span></span></Link><div className="pond-footer-links">{links.map(link=><Link href={link.href} key={link.href}>{link.label}</Link>)}<Link href="/donate">Donate</Link></div><span className="pond-disclaimer">Memes are fun. Crypto is risky. No promises of returns.</span><span className="pond-copyright">© {new Date().getFullYear()} COMMUNITY Coin</span></footer>
   </main>;
 }
