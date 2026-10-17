@@ -263,11 +263,61 @@ export function createBot() {
 
   bot.command("start", async (ctx) => {
     const p = ensure(ctx);
+    const keyboard = new InlineKeyboard()
+      .url("🌐 Website", site)
+      .url("📊 Dashboard", site + "/dashboard")
+      .row()
+      .url("🗳 Governance", site + "/governance")
+      .url("🏦 Treasury", site + "/treasury")
+      .row()
+      .url("🔗 Link Wallet", site + "/link-wallet")
+      .url("💬 Community Chat", process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/communitycoinchatt")
+      .row()
+      .text("🎁 Daily Points", "menu:daily")
+      .text("👤 My Points", "menu:balance")
+      .row()
+      .text("🏆 Leaderboard", "menu:leaderboard")
+      .text("❓ Help", "menu:help");
+
     await ctx.reply(
-      `Welcome to COMMUNITY Coin.\n\nCommunity-owned. No CEO. Built by holders.\n\n` +
+      `Welcome to COMMUNITY Coin! 👋\n\nCommunity-owned. No CEO. Built by holders.\n\n` +
         `${p ? `You have *${p.points} points*.` : ""}\n\n` +
-        `/help · /daily · /tip · /rain · /leaderboard · /vault · /memebattle\n\n` +
+        `Use the buttons below to explore the project and access your community points.\n\n` +
         `Points are for activity only — not real tokens.`,
+      { parse_mode: "Markdown", reply_markup: keyboard }
+    );
+  });
+
+  bot.callbackQuery(/^menu:(daily|balance|leaderboard|help)$/, async (ctx) => {
+    const action = ctx.match![1];
+    const p = ensure(ctx);
+    if (action === "daily") {
+      if (!p) return ctx.answerCallbackQuery();
+      const result = claimDaily(p.id);
+      await ctx.answerCallbackQuery({ text: result.ok ? `Claimed +${result.amount} points!` : result.error, show_alert: true });
+      if (result.ok) {
+        await ctx.reply(`🎁 Daily claimed: *+${result.amount}* points\nBalance: *${result.points}*`, { parse_mode: "Markdown" });
+      }
+      return;
+    }
+    if (action === "balance") {
+      if (!p) return ctx.answerCallbackQuery();
+      await ctx.answerCallbackQuery();
+      await ctx.reply(`${display(p)}\nPoints: *${p.points}*\nTips sent: ${p.tipsSent} · received: ${p.tipsReceived}`, { parse_mode: "Markdown" });
+      return;
+    }
+    if (action === "leaderboard") {
+      await ctx.answerCallbackQuery();
+      const top = leaderboard(10);
+      if (!top.length) return ctx.reply("No players yet — tap Start to begin.");
+      const lines = top.map((player, i) => `${i + 1}. ${display(player)} — *${player.points}*`);
+      await ctx.reply(`🏆 *COMMUNITY Coin Leaderboard*\n\n${lines.join("\n")}`, { parse_mode: "Markdown" });
+      return;
+    }
+    await ctx.answerCallbackQuery();
+    await ctx.reply(
+      "*COMMUNITY Coin Bot Help*\n\n" +
+        "/daily — claim daily points\n/balance — check your points\n/tip @username 50 — tip points\n/rain 100 — share points with active members\n/leaderboard — top members\n/quiz — play a quiz\n/memebattle — start a meme battle\n/vault — view treasury\n/price — view token data\n/wallet — link your wallet\n\nPoints are for activity only — not real tokens.",
       { parse_mode: "Markdown" }
     );
   });
