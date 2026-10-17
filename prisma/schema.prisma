@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(cuid())
+  telegramId  String?      @unique
+  username    String?      @unique
+  displayName String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  wallets     Wallet[]
+  sentTips    Tip[]        @relation("TipSender")
+  receivedTips Tip[]       @relation("TipRecipient")
+  votes       Vote[]
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String
+  address   String   @unique
+  verifiedAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+
+model WalletLinkChallenge {
+  id        String   @id @default(cuid())
+  nonce     String   @unique
+  wallet    String
+  userRef   String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  @@index([expiresAt])
+  @@index([userRef])
+}
+
+model Tip {
+  id              String   @id @default(cuid())
+  senderId        String
+  recipientId     String
+  asset           String
+  amountBaseUnits String
+  signature       String?  @unique
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+  confirmedAt     DateTime?
+  sender          User     @relation("TipSender", fields: [senderId], references: [id])
+  recipient       User     @relation("TipRecipient", fields: [recipientId], references: [id])
+  @@index([senderId, createdAt])
+  @@index([recipientId, createdAt])
+  @@index([status])
+}
+
+model Proposal {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  createdBy   String
+  status      String   @default("discussion")
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime @default(now())
+  votes       Vote[]
+  @@index([status, endsAt])
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  proposalId String
+  userId     String
+  choice     String
+  createdAt  DateTime @default(now())
+  proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([proposalId, userId])
+}
+
+model TreasuryTransaction {
+  id          String   @id @default(cuid())
+  signature   String   @unique
+  direction   String
+  asset       String
+  amountBaseUnits String
+  fromAddress String?
+  toAddress   String?
+  memo        String?
+  confirmedAt DateTime
+  createdAt   DateTime @default(now())
+  @@index([confirmedAt])
+}
+
+model ProcessedSignature {
+  signature  String   @id
+  purpose    String
+  status     String   @default("processing")
+  createdAt  DateTime @default(now())
+  completedAt DateTime?
+}
