@@ -15,7 +15,8 @@ A community-first Solana project: public website, read-only on-chain data, Teleg
 - Token dashboard at `/dashboard`.
 - Treasury transparency status at `/treasury`.
 - Governance proposal list at `/governance`.
-- Telegram bot commands `/start`, `/help`, `/price`, and `/tip`.
+- Telegram bot foundation with `/start`, `/help`, `/price`, and a deliberately disabled `/tip` flow until on-chain transfer verification is complete.
+- Server-side Telegram Web App `initData` verification and a short-lived, single-use Solana wallet-link flow at `/link-wallet` (message signature only; no funds move).
 - Prisma/PostgreSQL schema for users, wallet links, tips, proposals, votes, treasury transactions, and idempotent signature processing.
 
 ## Database
@@ -30,10 +31,10 @@ A configured mint, RPC URL, Telegram token, or treasury address does not prove t
 ## Security
 - Never request or store seed phrases/private keys.
 - Wallet signing happens in the user's own wallet through a secure HTTPS flow.
-- Do not accept a browser-supplied user ID as identity. Verify Telegram Web App init data or a server-issued one-time linking challenge.
+- Do not accept a browser-supplied user ID as identity. Telegram Web App init data is HMAC-verified server-side; wallet linking uses a five-minute, single-use challenge signed by the wallet.
 - Verify mint, destination, amount, signature, and on-chain confirmation before recording transfers.
 - Use idempotency, replay protection, rate limits, audit logs, and multisig treasury control.
 - Governance polls do not authorize treasury transfers.
 - Do not display fabricated balances, prices, votes, or treasury activity.
 
-Wallet linking, voting, tip execution, donation execution, and treasury indexing remain fail-closed until identity verification and transaction verification are implemented and tested.
+Wallet-linking code is implemented but still requires deployment configuration and end-to-end security testing. Voting, tip execution, donation execution, and treasury indexing remain disabled/fail-closed until their identity, eligibility, and on-chain transaction verification paths are implemented and tested.

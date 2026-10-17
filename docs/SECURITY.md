@@ -11,7 +11,7 @@
 
 ## Before enabling tipping or donations
 1. Configure PostgreSQL and apply the Prisma schema.
-2. Implement and test Telegram identity verification and one-time wallet linking.
+2. Configure the Telegram Web App and production site URL; test the implemented HMAC verification and one-time wallet-link flow end to end, including replay, expiry, wrong-user, and already-linked-wallet cases.
 3. Add a transaction builder that fixes the verified destination, mint, and amount on the server.
 4. Verify signatures and confirmed transactions on the server, with idempotent processing.
 5. Add rate limits, abuse controls, audit logs, monitoring, and recovery procedures.
