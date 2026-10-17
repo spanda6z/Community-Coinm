@@ -1,40 +1,85 @@
 "use client";
+
+import Link from "next/link";
 import { useState } from "react";
 
-const treasuryAddress = process.env.NEXT_PUBLIC_TREASURY_ADDRESS || "";
+const TREASURY =
+  process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
+  "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
 
 export default function DonatePage() {
   const [copied, setCopied] = useState(false);
+
   async function copyAddress() {
-    if (!treasuryAddress) return;
     try {
-      await navigator.clipboard.writeText(treasuryAddress);
+      await navigator.clipboard.writeText(TREASURY);
       setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
     }
   }
+
   return (
-    <main className="shell dashboard">
-      <a className="dashboard-back" href="/">← Back to home</a>
-      <div className="section-kicker"><span>COMMUNITY COIN / DONATIONS</span><span>VOLUNTARY SUPPORT</span></div>
-      <h1>Build it <em>together.</em></h1>
-      <p className="dashboard-intro">Contributions are voluntary. Check the destination address independently before sending anything. This page never asks for your recovery phrase or private key.</p>
-      {treasuryAddress ? (
-        <section className="data-panel">
-          <p className="eyebrow">CONFIGURED TREASURY ADDRESS</p>
-          <p className="mint-address" style={{ overflowWrap: "anywhere" }}>{treasuryAddress}</p>
-          <button className="button button-dark" onClick={copyAddress}>{copied ? "Address copied" : "Copy address"}</button>
-          <p style={{ marginTop: 16 }}>Only send an asset on a network you have independently verified. Sending the wrong token or using the wrong network can result in permanent loss.</p>
-          <a href={"https://explorer.solana.com/address/" + treasuryAddress} target="_blank" rel="noreferrer">Inspect address on Solana Explorer ↗</a>
-        </section>
-      ) : (
-        <section className="data-panel empty-state">
-          <h2>Donations are not configured</h2>
-          <p>No treasury address is published here because the project has not configured one. Do not send funds to an address shared in unofficial messages.</p>
-        </section>
-      )}
-      <p className="dashboard-foot">A displayed address is not proof of official ownership. Confirm the official address through multiple trusted project channels before donating. Community polls do not authorize treasury spending; use of funds should be governed by independent multisig controls.</p>
+    <main className="wrap" style={{ paddingTop: 48, paddingBottom: 80 }}>
+      <Link className="dashboard-back" href="/">
+        ← Back
+      </Link>
+      <p className="block-label">Community vault</p>
+      <h1
+        style={{
+          fontFamily: "var(--serif)",
+          fontWeight: 400,
+          fontSize: "clamp(28px, 4vw, 40px)",
+          letterSpacing: "-0.03em",
+          marginBottom: 12,
+        }}
+      >
+        Fuel marketing &amp; airdrops
+      </h1>
+      <p className="block-text">
+        Voluntary support only. Funds are used for marketing and airdrops — not
+        an investment product. No yield. No guaranteed returns. Always verify
+        the address yourself.
+      </p>
+
+      <div className="vault-panel" style={{ maxWidth: 480 }}>
+        <p className="label">Treasury wallet</p>
+        <p className="addr">{TREASURY}</p>
+        <p className="note">
+          Only send SOL (or assets you have verified) on Solana. Wrong network
+          or token can mean permanent loss. Never share a seed phrase.
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          <button type="button" className="btn btn-fill" onClick={copyAddress}>
+            {copied ? "Copied" : "Copy address"}
+          </button>
+          <a
+            className="btn btn-line"
+            href={`https://explorer.solana.com/address/${TREASURY}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Explorer
+          </a>
+          <Link className="btn btn-line" href="/spends">
+            Spends log
+          </Link>
+        </div>
+      </div>
+
+      <p
+        style={{
+          marginTop: 36,
+          fontSize: 12,
+          color: "var(--dim)",
+          lineHeight: 1.6,
+          maxWidth: 480,
+        }}
+      >
+        Confirm this address through official project channels before sending.
+        A page on the internet is not proof by itself.
+      </p>
     </main>
   );
 }

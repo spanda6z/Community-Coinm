@@ -24,14 +24,25 @@ export default function Home() {
           community<span>coin</span>
         </Link>
         <div className="nav-links">
+          <a href="#how">How it works</a>
           <a href="#vault">Vault</a>
           <a href="#telegram">Telegram</a>
-          <a href="#memes">Memes</a>
           <a href="#transparency">On-chain</a>
         </div>
-        <a className="nav-cta" href={TELEGRAM} target="_blank" rel="noreferrer">
-          Join
-        </a>
+        <div className="nav-right">
+          <a
+            className="nav-social"
+            href={X_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="X"
+          >
+            X
+          </a>
+          <a className="nav-cta" href={TELEGRAM} target="_blank" rel="noreferrer">
+            Join
+          </a>
+        </div>
       </nav>
 
       <section className="hero wrap">
@@ -50,7 +61,7 @@ export default function Home() {
         </p>
         <div className="hero-actions">
           <a className="btn btn-fill" href={TELEGRAM} target="_blank" rel="noreferrer">
-            Join the movement
+            Join Telegram
           </a>
           <a className="btn btn-line" href="#vault">
             Fuel marketing &amp; airdrops
@@ -66,6 +77,62 @@ export default function Home() {
           marketing &amp; airdrops. No yield.
         </p>
         <span>Verify everything on-chain</span>
+      </section>
+
+      <hr className="rule" />
+
+      {/* HOW IT WORKS */}
+      <section className="block wrap" id="how">
+        <p className="block-label">How it works</p>
+        <h2>
+          Simple by design.
+        </h2>
+        <p className="block-text">
+          No complicated product deck. Four moves that keep the community honest
+          and active.
+        </p>
+        <div className="rows">
+          <div className="row">
+            <span className="row-num">01</span>
+            <div>
+              <h3>Join the chat</h3>
+              <p>
+                Telegram is home base. New members pass a short maths check or
+                get removed — keeps bots out.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">02</span>
+            <div>
+              <h3>Show up</h3>
+              <p>
+                Daily check-ins, tips, rains, quizzes, meme battles. Activity
+                builds the culture and the leaderboard.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">03</span>
+            <div>
+              <h3>Fuel the vault</h3>
+              <p>
+                Optional. Send to the public treasury to fund marketing and
+                airdrops. Not a deposit product — no yield.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">04</span>
+            <div>
+              <h3>Verify on-chain</h3>
+              <p>
+                Mint, treasury, and spends are public. Trust the links you can
+                check yourself.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <hr className="rule" />
@@ -123,8 +190,11 @@ export default function Home() {
               returns.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <Link className="btn btn-fill" href="/donate">
+                Support the vault
+              </Link>
               <a
-                className="btn btn-fill"
+                className="btn btn-line"
                 href={`https://explorer.solana.com/address/${TREASURY}`}
                 target="_blank"
                 rel="noreferrer"
@@ -242,8 +312,8 @@ export default function Home() {
         <p className="block-label">Culture</p>
         <h2>The meme wall.</h2>
         <p className="block-text">
-          Submit in Telegram. Upvote the best. Weekly winners get the site,
-          a role, an X shoutout, and points.
+          Submit in Telegram. Upvote the best. Weekly winners get the site, a
+          role, an X shoutout, and points.
         </p>
 
         <div className="rows" style={{ marginBottom: 40 }}>
@@ -362,6 +432,56 @@ export default function Home() {
 
       <hr className="rule" />
 
+      {/* FAQ */}
+      <section className="block wrap" id="faq">
+        <p className="block-label">FAQ</p>
+        <h2>Straight answers.</h2>
+        <div className="rows" style={{ marginTop: 32 }}>
+          <div className="row">
+            <span className="row-num">?</span>
+            <div>
+              <h3>Is depositing into the vault an investment?</h3>
+              <p>
+                No. Support is voluntary. Funds are for marketing and airdrops.
+                There is no yield and no guaranteed return.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">?</span>
+            <div>
+              <h3>Who controls the culture?</h3>
+              <p>
+                Holders. There is no CEO narrative and no private allocation
+                story. Memes, raids, and energy come from the community.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">?</span>
+            <div>
+              <h3>What are bot points?</h3>
+              <p>
+                Activity scores for tips, dailies, quizzes, and battles. Points
+                are not tokens and are not a promise of airdrop size.
+              </p>
+            </div>
+          </div>
+          <div className="row">
+            <span className="row-num">?</span>
+            <div>
+              <h3>What does the $1B figure mean?</h3>
+              <p>
+                A shared long-term ambition — not a forecast, not financial
+                advice, not a guarantee.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr className="rule" />
+
       <section className="final wrap">
         <h2>
           Together, we grow.
@@ -387,6 +507,7 @@ export default function Home() {
           <Link href="/dashboard">On-chain</Link>
           <Link href="/treasury">Treasury</Link>
           <Link href="/spends">Spends</Link>
+          <Link href="/donate">Support</Link>
           <a href={TELEGRAM} target="_blank" rel="noreferrer">
             Telegram
           </a>
