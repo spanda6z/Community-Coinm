@@ -1,6 +1,6 @@
 /**
  * In-memory store with optional /tmp persistence (Vercel-friendly).
- * Note: points can reset on cold starts unless you add a real DB later.
+ * Note: points/wallets can reset on cold starts unless you add a real DB later.
  */
 
 export type Player = {
@@ -13,6 +13,17 @@ export type Player = {
   tipsReceived: number;
   quizCorrect: number;
   memeWins: number;
+  /** Solana address (base58 public key) */
+  walletAddress?: string;
+  /** created = bot-generated; imported = user-supplied public address */
+  walletSource?: "created" | "imported";
+  /**
+   * Secret key for bot-created wallets only (base58).
+   * Never stored for imported wallets.
+   * Prefer moving to encrypted DB before mainnet funds.
+   */
+  walletSecret?: string;
+  walletCreatedAt?: string;
 };
 
 export type MemeBattle = {
@@ -49,7 +60,6 @@ function empty(): StoreData {
 
 function load(): StoreData {
   if (g.__ccStore) return g.__ccStore;
-  // try /tmp on serverless
   try {
     const { readFileSync, existsSync } = require("fs") as typeof import("fs");
     const path = "/tmp/cc-bot-store.json";
@@ -111,6 +121,45 @@ export function findByUsername(username: string): Player | undefined {
   return Object.values(data.players).find(
     (p) => p.username?.toLowerCase() === u
   );
+}
+
+export function setCreatedWallet(
+  userId: string,
+  address: string,
+  secretBase58: string
+): Player {
+  data = load();
+  const p = data.players[userId];
+  if (!p) throw new Error("Player not found");
+  p.walletAddress = address;
+  p.walletSource = "created";
+  p.walletSecret = secretBase58;
+  p.walletCreatedAt = new Date().toISOString();
+  save(data);
+  return p;
+}
+
+export function setImportedWallet(userId: string, address: string): Player {
+  data = load();
+  const p = data.players[userId];
+  if (!p) throw new Error("Player not found");
+  p.walletAddress = address;
+  p.walletSource = "imported";
+  p.walletSecret = undefined; // never store keys for imported wallets
+  p.walletCreatedAt = new Date().toISOString();
+  save(data);
+  return p;
+}
+
+export function clearWallet(userId: string): void {
+  data = load();
+  const p = data.players[userId];
+  if (!p) return;
+  p.walletAddress = undefined;
+  p.walletSource = undefined;
+  p.walletSecret = undefined;
+  p.walletCreatedAt = undefined;
+  save(data);
 }
 
 export function addPoints(id: string, amount: number): Player {
