@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { VAULT_SPENDS } from "../lib/vault-spends";
-
-const TREASURY =
-  process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
-  "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
+import { getVaultBalance, treasuryAddress } from "../lib/get-vault-balance";
 
 const TELEGRAM =
   process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/communitycoinchatt";
@@ -13,9 +10,11 @@ const X_URL =
 const BANNER =
   "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
 
-export default function Home() {
+export default async function Home() {
+  const TREASURY = treasuryAddress();
   const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
   const recentSpends = VAULT_SPENDS.slice(0, 3);
+  const vault = await getVaultBalance();
 
   return (
     <main>
@@ -81,12 +80,9 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* HOW IT WORKS */}
       <section className="block wrap" id="how">
         <p className="block-label">How it works</p>
-        <h2>
-          Simple by design.
-        </h2>
+        <h2>Simple by design.</h2>
         <p className="block-text">
           No complicated product deck. Four moves that keep the community honest
           and active.
@@ -183,11 +179,24 @@ export default function Home() {
           </div>
 
           <div className="vault-panel">
-            <p className="label">Treasury wallet</p>
+            <p className="label">Vault balance</p>
+            <p className="vault-balance">
+              {vault.ok ? (
+                <>
+                  <span className="vault-sol">{vault.solFormatted}</span>
+                  <span className="vault-unit"> SOL</span>
+                </>
+              ) : (
+                <span className="vault-sol">—</span>
+              )}
+            </p>
+            <p className="label" style={{ marginTop: 20 }}>
+              Treasury wallet
+            </p>
             <p className="addr">{TREASURY}</p>
             <p className="note">
-              Marketing &amp; airdrops only. Voluntary. No yield. No guaranteed
-              returns.
+              Live on-chain balance. Marketing &amp; airdrops only. Voluntary. No
+              yield. No guaranteed returns.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <Link className="btn btn-fill" href="/donate">
@@ -266,10 +275,8 @@ export default function Home() {
           Tip, play, <em>and stay active.</em>
         </h2>
         <p className="block-text">
-          Chat is where the culture lives. Daily habits beat empty feature
-          lists.
+          Chat is where the culture lives. Daily habits beat empty feature lists.
         </p>
-
         <div className="cmds">
           <div className="cmd">
             <code>/daily</code>
@@ -293,10 +300,9 @@ export default function Home() {
           </div>
           <div className="cmd">
             <code>/vault</code>
-            <p>Treasury address + purpose.</p>
+            <p>Live balance + treasury address.</p>
           </div>
         </div>
-
         <p className="block-text" style={{ marginTop: 36, marginBottom: 24 }}>
           New members pass a maths check in 3 minutes or get removed. Points are
           for activity — not tokens.
@@ -315,31 +321,6 @@ export default function Home() {
           Submit in Telegram. Upvote the best. Weekly winners get the site, a
           role, an X shoutout, and points.
         </p>
-
-        <div className="rows" style={{ marginBottom: 40 }}>
-          <div className="row">
-            <span className="row-num">01</span>
-            <div>
-              <h3>Submit</h3>
-              <p>Drop memes in chat. Holders build the wall.</p>
-            </div>
-          </div>
-          <div className="row">
-            <span className="row-num">02</span>
-            <div>
-              <h3>Battle</h3>
-              <p>Use /memebattle — short contests, clear winners.</p>
-            </div>
-          </div>
-          <div className="row">
-            <span className="row-num">03</span>
-            <div>
-              <h3>Feature</h3>
-              <p>Meme of the Week across site, Telegram, and X.</p>
-            </div>
-          </div>
-        </div>
-
         <div className="meme-teaser">
           <h3>Gallery opening soon</h3>
           <p>First community submissions will appear here.</p>
@@ -359,7 +340,6 @@ export default function Home() {
         <p className="block-text">
           No mystery numbers. Confirm mint, vault, and spends yourself.
         </p>
-
         <div className="split">
           <div className="addr-block">
             <div className="addr-item">
@@ -386,6 +366,9 @@ export default function Home() {
             </div>
             <div className="addr-item">
               <p className="lbl">Vault · marketing &amp; airdrops</p>
+              <p style={{ fontSize: 28, fontWeight: 600, margin: "8px 0 12px" }}>
+                {vault.ok ? `${vault.solFormatted} SOL` : "— SOL"}
+              </p>
               <code>{TREASURY}</code>
               <a
                 href={`https://explorer.solana.com/address/${TREASURY}`}
@@ -396,7 +379,6 @@ export default function Home() {
               </a>
             </div>
           </div>
-
           <div
             style={{
               display: "flex",
@@ -405,25 +387,13 @@ export default function Home() {
               justifyContent: "center",
             }}
           >
-            <Link
-              href="/dashboard"
-              className="btn btn-fill"
-              style={{ alignSelf: "flex-start" }}
-            >
+            <Link href="/dashboard" className="btn btn-fill" style={{ alignSelf: "flex-start" }}>
               Token data
             </Link>
-            <Link
-              href="/treasury"
-              className="btn btn-line"
-              style={{ alignSelf: "flex-start" }}
-            >
+            <Link href="/treasury" className="btn btn-line" style={{ alignSelf: "flex-start" }}>
               Treasury activity
             </Link>
-            <Link
-              href="/spends"
-              className="btn btn-line"
-              style={{ alignSelf: "flex-start" }}
-            >
+            <Link href="/spends" className="btn btn-line" style={{ alignSelf: "flex-start" }}>
               Spends log
             </Link>
           </div>
@@ -432,7 +402,6 @@ export default function Home() {
 
       <hr className="rule" />
 
-      {/* FAQ */}
       <section className="block wrap" id="faq">
         <p className="block-label">FAQ</p>
         <h2>Straight answers.</h2>
