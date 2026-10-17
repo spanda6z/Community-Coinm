@@ -10,6 +10,11 @@ const links = [
 const BANNER =
   "https://cdn.phototourl.com/member/2026-10-17-1a5f940e-5861-4ed4-a043-b066d11a5d98.jpg";
 
+/** Official community treasury wallet (public). */
+const TREASURY =
+  process.env.NEXT_PUBLIC_TREASURY_ADDRESS ||
+  "21fsnH5cGMoKdN49psbw1dcbD16VW64ziu1nnKPy4NAP";
+
 export default function Home() {
   const mint = process.env.NEXT_PUBLIC_TOKEN_MINT;
   const telegram = process.env.NEXT_PUBLIC_TELEGRAM_URL || "https://t.me/";
@@ -243,52 +248,80 @@ export default function Home() {
                 Token data
               </Link>
               <Link href="/treasury" className="btn btn-secondary">
-                Treasury
+                Treasury activity
               </Link>
             </div>
           </div>
 
-          <div className="addr-card">
-            <div className="addr-head">
-              <span>Token</span>
-              <span className="live">
-                {mint ? "Configured" : "Not configured"}
-              </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div className="addr-card">
+              <div className="addr-head">
+                <span>Token mint</span>
+                <span className="live">
+                  {mint ? "Configured" : "Not configured"}
+                </span>
+              </div>
+              <div className="addr-body">
+                <span>Solana mint address</span>
+                {mint ? (
+                  <>
+                    <code>{mint}</code>
+                    <a
+                      href={`https://explorer.solana.com/address/${mint}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      View on Explorer →
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <strong
+                      style={{
+                        display: "block",
+                        marginBottom: 8,
+                        fontSize: 14,
+                        color: "#fff",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Not configured yet
+                    </strong>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: 13,
+                        color: "var(--muted)",
+                        lineHeight: 1.55,
+                      }}
+                    >
+                      The official mint will appear here once it is set and
+                      verified.
+                    </p>
+                  </>
+                )}
+              </div>
+              <div className="addr-foot">On-chain · independently verifiable</div>
             </div>
-            <div className="addr-body">
-              <span>Solana mint address</span>
-              {mint ? (
-                <>
-                  <code>{mint}</code>
-                  <a
-                    href={`https://explorer.solana.com/address/${mint}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    View on Explorer →
-                  </a>
-                </>
-              ) : (
-                <>
-                  <strong
-                    style={{
-                      display: "block",
-                      marginBottom: 8,
-                      fontSize: 14,
-                      color: "#fff",
-                      fontWeight: 600,
-                    }}
-                  >
-                    Not configured yet
-                  </strong>
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.55 }}>
-                    The official mint will appear here once it is set and
-                    verified.
-                  </p>
-                </>
-              )}
+
+            <div className="addr-card">
+              <div className="addr-head">
+                <span>Treasury</span>
+                <span className="live">Official</span>
+              </div>
+              <div className="addr-body">
+                <span>Treasury wallet</span>
+                <code>{TREASURY}</code>
+                <a
+                  href={`https://explorer.solana.com/address/${TREASURY}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  View on Explorer →
+                </a>
+              </div>
+              <div className="addr-foot">Community treasury · public address</div>
             </div>
-            <div className="addr-foot">On-chain · independently verifiable</div>
           </div>
         </div>
       </section>
