@@ -139,3 +139,7 @@ body{background:var(--paper);color:var(--ink)}
 .pond-footer .pond-brand-icon{background:#fff!important;border:1.5px solid #080808!important;color:#080808!important}
 .pond .pond-button:hover,.pond .pond-nav-cta:hover{box-shadow:0 7px 0 #08080820!important}
 @media(max-width:680px){.pond-brand-logo{width:35px;height:35px}.pond-hero-logo{width:min(78vw,330px);height:min(78vw,330px);padding:7px;box-shadow:0 12px 0 #080808}.pond-hero-visual{height:370px}}
+
+
+/* Enforce monochrome across all routes and interface icons */
+html{filter:grayscale(1)}
