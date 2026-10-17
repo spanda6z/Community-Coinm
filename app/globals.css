@@ -98,3 +98,44 @@ body{background:var(--paper);color:var(--ink)}
 .pond-coin-sticker{overflow:hidden;padding:0;background:#fffdf2}
 .pond-coin-sticker img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
 @media(max-width:680px){.pond-brand-logo{width:35px;height:35px}}
+
+
+/* COMMUNITY Coin monochrome brand system: black, white, and grayscale only */
+.pond{background:#fff!important;color:#080808!important}
+.pond-topline,.pond-green-section,.pond-ticker{background:#080808!important;color:#fff!important;border-color:#080808!important}
+.pond-topline i,.pond-pill span,.pond-ticker-track b,.pond-star,.pond-intro h2 em,.pond-join-copy h2 em,.pond-transparency h2 em,.pond-final h2 em,.pond-hand-note{color:#080808!important}
+.pond-topline i{background:#fff!important}
+.pond-nav,.pond-section-label,.pond-label-light{border-color:#d8d8d8!important}
+.pond-brand-light,.pond-nav-links,.pond-subtitle,.pond-small-note p,.pond-intro-copy p,.pond-transparency-grid>div>p,.pond-final p,.pond-footer-links,.pond-disclaimer,.pond-copyright{color:#555!important}
+.pond-pill,.pond-sticker,.pond-address-card,.pond-card{background:#fff!important;color:#080808!important;border-color:#080808!important;box-shadow:4px 5px 0 #080808!important}
+.pond-nav-cta,.pond-button-dark{background:#080808!important;color:#fff!important;border-color:#080808!important}
+.pond-button-cream{background:#fff!important;color:#080808!important;border-color:#fff!important}
+.pond-button-outline{background:transparent!important;color:#080808!important;border-color:#080808!important}
+.pond-card-lime,.pond-card-pink,.pond-card-blue{background:#fff!important}
+.pond-card p,.pond-steps p,.pond-join-copy>p,.pond-address-body p{color:#555!important}
+.pond-doodle,.pond-card-bottom,.pond-steps>div>span,.pond-under-link,.pond-address-body a{color:#080808!important}
+.pond-join-orbit,.pond-ripple{border-color:#888!important}
+.pond-sun{background:#f2f2f2!important}
+.pond-join-bubble{background:#fff!important;color:#080808!important;border-color:#080808!important}
+.pond-final{background:#f1f1f1!important}
+.pond-final-frog{background:#fff!important;border-color:#080808!important}
+.pond-address-head{background:#f0f0f0!important;border-color:#080808!important}
+.pond-live-dot{color:#333!important}
+.pond-live-dot:before{background:#080808!important}
+.pond-address-foot{border-color:#ddd!important;color:#555!important}
+.pond-green-section .pond-steps>div{border-color:#555!important}
+.pond-green-section .pond-section-label{color:#ddd!important;border-color:#555!important}
+.pond-green-section .pond-steps h3,.pond-green-section .pond-join-copy h2{color:#fff!important}
+.pond-brand-logo{width:40px;height:40px;display:block;object-fit:cover;border:1.5px solid #080808;border-radius:50%;flex:none}
+.pond-hero-visual{isolation:isolate}
+.pond-hero-logo{position:relative;z-index:2;display:block;width:clamp(270px,34vw,430px);height:clamp(270px,34vw,430px);object-fit:contain;border-radius:50%;background:#fff;border:2px solid #080808;padding:10px;box-shadow:0 18px 0 #080808;filter:grayscale(1);transform:rotate(-4deg);transition:transform .25s ease}
+.pond-hero-logo:hover{transform:rotate(0deg) scale(1.025)}
+.pond-coin-sticker{display:none!important}
+.pond-frog,.pond-frog-small,.pond-frog-end{filter:grayscale(1)!important}
+.pond-hero h1 em{color:#080808!important;text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:7px}
+.pond-hero .pond-pill{border-color:#080808!important}
+.pond-small-note>span{background:#eee!important;color:#080808!important}
+.pond-card-num,.pond-section-label,.pond-hero-bottom,.pond-final-kicker{color:#555!important}
+.pond-footer .pond-brand-icon{background:#fff!important;border:1.5px solid #080808!important;color:#080808!important}
+.pond .pond-button:hover,.pond .pond-nav-cta:hover{box-shadow:0 7px 0 #08080820!important}
+@media(max-width:680px){.pond-brand-logo{width:35px;height:35px}.pond-hero-logo{width:min(78vw,330px);height:min(78vw,330px);padding:7px;box-shadow:0 12px 0 #080808}.pond-hero-visual{height:370px}}
